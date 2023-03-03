@@ -15,7 +15,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Typography variant="h1">
-        starter project with next and material ui
+        starter project with next, material ui and web3
       </Typography>
       <Typography variant="h4">packages installtation:</Typography>
       <Typography variant="h4">----------</Typography>
@@ -28,6 +28,11 @@ export default function Home() {
       <Typography variant="h4">
         yarn add @emotion/cache @emotion/server
       </Typography>
+      <Typography variant="h4">yarn add ipfs-http-client</Typography>
+      <Typography variant="h4">
+        yarn add @rainbow-me/rainbowkit wagmi ethers@^5
+      </Typography>
+      <Typography variant="h4">yarn add @apollo/client graphql</Typography>
       <Typography variant="h4">
         {" "}
         Then check out. How to guilde to server side rendering --
@@ -36,6 +41,20 @@ export default function Home() {
       <Typography variant="h4">
         and. copy from github
         https://github.com/mui/material-ui/tree/HEAD/examples/material-next
+      </Typography>
+      <Typography variant="h4">
+        Read GraphQL: https://www.apollographql.com/docs/react/get-started
+      </Typography>
+      <Typography variant="h4">
+        Read how to add Web3 Wallet:
+        https://www.rainbowkit.com/docs/installation
+      </Typography>
+      <Typography variant="h4">
+        Read Web3 Interaction: https://wagmi.sh/core/getting-started
+      </Typography>
+      <Typography variant="h4">
+        Read IPFS API: Reference dabit's project for create-nft.js in
+        https://github.com/dabit3/polygon-ethereum-nextjs-marketplace/
       </Typography>
     </>
   );
