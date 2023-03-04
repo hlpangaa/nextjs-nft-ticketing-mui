@@ -23,7 +23,8 @@ export default function Home() {
         npx create-next-app@latest project-name
       </Typography>
       <Typography variant="h4">
-        yarn add @mui/material @emotion/react @emotion/styled
+        yarn add @mui/material @mui/icons-material @mui/lab@emotion/react
+        @emotion/styled
       </Typography>
       <Typography variant="h4">
         yarn add @emotion/cache @emotion/server
@@ -33,6 +34,7 @@ export default function Home() {
         yarn add @rainbow-me/rainbowkit wagmi ethers@^5
       </Typography>
       <Typography variant="h4">yarn add @apollo/client graphql</Typography>
+      <Typography variant="h4">????yarn add swr</Typography>
       <Typography variant="h4">
         {" "}
         Then check out. How to guilde to server side rendering --
@@ -55,6 +57,9 @@ export default function Home() {
       <Typography variant="h4">
         Read IPFS API: Reference dabit's project for create-nft.js in
         https://github.com/dabit3/polygon-ethereum-nextjs-marketplace/
+      </Typography>
+      <Typography variant="h4">
+        ????SWR for data fetching https://swr.vercel.app/docs/getting-started
       </Typography>
     </>
   );
