@@ -4,6 +4,15 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
+import ActionAreaCard from "@/components/Cards/ActionAreaCard";
+import Container from "@mui/material/Container";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import { CardActionArea } from "@mui/material";
+
+const imageUri =
+  "http://localhost:3000/_next/image?url=https%3A%2F%2Fgateway.pinata.cloud%2Fipfs%2FQmQ3q5h3zkhkG6sXBs2PuKJ5E9tsbpPGcYkcJU5PYcUVCG&w=1200&q=75";
 
 export default function PaymentForm() {
   return (
@@ -60,6 +69,25 @@ export default function PaymentForm() {
           />
         </Grid>
       </Grid>
+      <Container maxWidth="sm" sx={{ mb: 4 }}>
+        <Card sx={{ maxWidth: 345 }}>
+          <CardMedia
+            component="img"
+            height="140"
+            image={imageUri}
+            alt="green iguana"
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              Lizard
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Lizards are a widespread group of squamate reptiles, with over
+              6,000 species, ranging across all continents except Antarctica
+            </Typography>
+          </CardContent>
+        </Card>
+      </Container>
     </React.Fragment>
   );
 }

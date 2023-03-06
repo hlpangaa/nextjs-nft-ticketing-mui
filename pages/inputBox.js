@@ -18,7 +18,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 
 // import from project files
-import nftMarketplaceAbi from "../constants/NftMarketplace.js";
+import nftMarketplaceAbi from "../constants/NftMarketplace.json";
 import nftFactoryAbi from "../constants/EventFactory.json";
 import nftAbi from "../constants/EventContract.json";
 

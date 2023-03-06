@@ -14,13 +14,12 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
+import Button from "@mui/material/Button";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { mainListItems, secondaryListItems } from "./listItems";
-import Chart from "./Chart";
-import Deposits from "./Deposits";
-import Orders from "./Orders";
+
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 function Copyright(props) {
@@ -89,14 +88,15 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function AppBarContent() {
+function NavigationContent() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
   return (
     <React.Fragment>
-      <AppBar>
+      <AppBar position="absolute" open={open}>
         <Toolbar
           sx={{
             pr: "24px", // keep right padding when drawer closed
@@ -120,8 +120,9 @@ function AppBarContent() {
             color="inherit"
             noWrap
             sx={{ flexGrow: 1 }}
+            src="/"
           >
-            Dashboard
+            NFT Market Demo
           </Typography>
           <IconButton color="inherit">
             <Badge badgeContent={4} color="secondary">
@@ -131,9 +132,29 @@ function AppBarContent() {
           <ConnectButton />
         </Toolbar>
       </AppBar>
+      <Drawer variant="permanent" open={open}>
+        <Toolbar
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "flex-end",
+            px: [1],
+          }}
+        >
+          <IconButton onClick={toggleDrawer}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </Toolbar>
+        <Divider />
+        <List component="nav">
+          {mainListItems}
+          <Divider sx={{ my: 1 }} />
+          {secondaryListItems}
+        </List>
+      </Drawer>
     </React.Fragment>
   );
 }
-export default function AppBarFunction() {
-  return <AppBarContent />;
+export default function NavigationFunction() {
+  return <NavigationContent />;
 }

@@ -17,10 +17,10 @@ import { ethers, BigNumber } from "ethers";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 // import from project files
-import nftMarketplaceAbi from "../constants/NftMarketplace.json";
-import nftFactoryAbi from "../constants/EventFactory.json";
-import nftAbi from "../constants/EventContract.json";
-import FlipCard, { BackCard, FrontCard } from "../../components/FlipCard";
+import nftMarketplaceAbi from "../../constants/NftMarketplace.json";
+import nftFactoryAbi from "../../constants/EventFactory.json";
+import nftAbi from "../../constants/EventContract.json";
+import FlipCard, { BackCard, FrontCard } from "@components/Cards/FlipCard";
 
 // project consts
 const marketplaceAddress = "0x0a5537a12d4EF5E274bF4b18bb79FD968CCF667C";

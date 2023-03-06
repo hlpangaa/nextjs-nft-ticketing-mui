@@ -11,5 +11,6 @@ module.exports = {
         pathname: "/ipfs/**",
       },
     ],
+    use: { loader: "markdown-loader" },
   },
 };

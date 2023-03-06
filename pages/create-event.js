@@ -17,13 +17,15 @@ import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { mainListItems, secondaryListItems } from "@/components/listItems";
-import Dashboard from "@/components/Dashboard";
-import Chart from "@/components/Chart";
+import {
+  mainListItems,
+  secondaryListItems,
+} from "@/components/Navigations/listItems";
+import Dashboard from "@/components/Delete/Dashboard";
+import Chart from "@/components/Charts/Chart";
 import Deposits from "@/components/Deposits";
-import Orders from "@/components/Orders";
-import AppBar from "@/components/AppBar";
-import Drawer from "@/components/Drawer";
+import CreateEventForm from "@/components/Forms/CreateEventForm";
+import Navigation from "@/components/Navigations/Navigation";
 
 function Copyright(props) {
   return (
@@ -55,8 +57,7 @@ function HomeContent() {
     <ThemeProvider theme={mdTheme}>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar position="absolute" open={open} />
-        <Drawer />
+        <Navigation />
         <Box
           component="main"
           sx={{
@@ -72,10 +73,10 @@ function HomeContent() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* NFT Form */}
+              {/* CreateEventForm */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Orders />
+                  <CreateEventForm />
                 </Paper>
               </Grid>
             </Grid>

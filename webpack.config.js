@@ -14,5 +14,6 @@ module.exports = {
         fs: false,
       },
     },
+    use: { loader: "markdown-loader" },
   },
 };

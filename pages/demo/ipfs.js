@@ -10,9 +10,9 @@ import { useRouter } from "next/router";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 // import from project files
-import NFTMarketplace from "../constants/NftMarketplace.json";
-import nftFactoryAbi from "../constants/EventFactory.json";
-import nftAbi from "../constants/EventContract.json";
+import NFTMarketplace from "@/constants/NftMarketplace.json";
+import nftFactoryAbi from "@/constants/EventFactory.json";
+import nftAbi from "@/constants/EventContract.json";
 
 // project consts
 const marketplaceAddress = "0x0833F6490610b9bAC23cd8b43f8186871d296812";

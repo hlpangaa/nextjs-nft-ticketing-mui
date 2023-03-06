@@ -16,7 +16,7 @@ export const mainListItems = (
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
-      <ListItemText primary="Dashboard" />
+      <ListItemText primary="My Events" />
     </ListItemButton>
     <ListItemButton href="/create-event">
       <ListItemIcon>
@@ -28,15 +28,21 @@ export const mainListItems = (
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
-      <ListItemText primary="Customers" />
+      <ListItemText primary="My Tickets" />
     </ListItemButton>
-    <ListItemButton href="/sell-ticket">
+    <ListItemButton href="/sell-tickets">
+      <ListItemIcon>
+        <PeopleIcon />
+      </ListItemIcon>
+      <ListItemText primary="Sell Tickets" />
+    </ListItemButton>
+    <ListItemButton href="/recent-events">
       <ListItemIcon>
         <BarChartIcon />
       </ListItemIcon>
-      <ListItemText primary="Reports" />
+      <ListItemText primary="Recent Events" />
     </ListItemButton>
-    <ListItemButton href="/recent-events">
+    <ListItemButton href="/others">
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
