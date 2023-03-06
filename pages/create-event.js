@@ -24,7 +24,7 @@ import {
 import Dashboard from "@/components/Delete/Dashboard";
 import Chart from "@/components/Charts/Chart";
 import Deposits from "@/components/Deposits";
-import Orders from "@/components/Tables/Orders";
+import CreateEventForm from "@/components/Forms/CreateEventForm";
 import Navigation from "@/components/Navigations/Navigation";
 
 function Copyright(props) {
@@ -73,36 +73,10 @@ function HomeContent() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
+              {/* CreateEventForm */}
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Orders />
+                  <CreateEventForm />
                 </Paper>
               </Grid>
             </Grid>

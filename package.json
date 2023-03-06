@@ -4,20 +4,38 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "webpack",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.9",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.10.6",
     "@emotion/server": "^11.10.0",
     "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.11",
+    "@mui/lab": "^5.0.0-alpha.121",
     "@mui/material": "^5.11.11",
+    "@pinata/sdk": "^2.1.0",
+    "@rainbow-me/rainbowkit": "^0.11.0",
+    "dotenv": "^16.0.3",
     "eslint": "8.35.0",
     "eslint-config-next": "13.2.3",
+    "ethers": "^5",
+    "framer-motion": "^10.0.1",
+    "fs": "^0.0.1-security",
+    "graphql": "^16.6.0",
+    "ipfs-http-client": "^60.0.0",
+    "markdown-to-jsx": "^7.1.9",
     "next": "13.2.3",
+    "path": "^0.12.7",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
-  }
+    "react-dom": "18.2.0",
+    "recharts": "^2.4.3",
+    "wagmi": "^0.11.7",
+    "webpack": "^5.0.0-rc.6",
+    "webpack-cli": "^5.0.1"
+  },
+  "devDependencies": {}
 }
