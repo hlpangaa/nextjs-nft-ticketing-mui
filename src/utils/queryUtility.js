@@ -16,6 +16,9 @@ import {
   GET_DISABLED_EVENTS,
   GET_OWNERSHIP_TRANSFERRED_ITEMS,
 } from "@/constants/subgraphQueries";
+import Title from "@/components/Typography/Title";
+import TranscationTable from "@/components/Tables/TranscationTable";
+import { getMintFee } from "@/src/utils/contractUtility";
 
 /** Pages
  * 1. My Event
@@ -38,10 +41,13 @@ import {
  * 6. Recent Events
  * - 6.1 all active events
  *
+ * Display type:
+ * Record purpose - block, timestamp ,Txhash, transcation type, counter party
+ * invoice purpose - price/ amount - listing/minted/bought
  *  */
 
 // 1.3 My Event: DisplayCreatedEvents => (nft) => call query for itemMinted + call contract for mintedFee
-// 3.2 My Ticket (account as minter)
+// [3.2] My Ticket (account as minter)
 export function DisplayMintedItems(minterAddress) {
   const { loading, error, data } = useQuery(GET_MINTED_ITEMS, {
     variables: { minter: minterAddress.toString() },
@@ -52,6 +58,7 @@ export function DisplayMintedItems(minterAddress) {
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Title>Minted Items</Title>
       <Grid container spacing={4}>
         {data.itemMinteds.map(({ id, tokenId, nftAddress }) => (
           <FeaturedPost
@@ -65,18 +72,49 @@ export function DisplayMintedItems(minterAddress) {
     </Container>
   );
 }
+//useTable
+export function DisplayMintedItemsInTable(props) {
+  const { title, flexColumnName, minterAddress, ...rest } = props;
+  const { loading, error, data } = useQuery(GET_MINTED_ITEMS, {
+    variables: { minter: minterAddress.toString() },
+  });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+
+  const rows = data.itemMinteds.map((obj) => ({
+    ...obj,
+    id: obj.id,
+    timestamp: "01 Jan 2023",
+    hash: obj.nftAddress,
+    flexColumn: obj.beneficiary,
+    transcationType: "Mint",
+    value: getMintFee(obj.nftAddress),
+  }));
+
+  return (
+    <TranscationTable
+      title={title}
+      flexColumnName={flexColumnName}
+      rows={rows}
+    ></TranscationTable>
+  );
+}
 
 // 1.4 My Event(account as receiver)
-// 3.5 My Ticket(account as sender)
-export function DisplayRoyalitiesPaid() {
-  const { loading, error, data } = useQuery(GET_ROYALITIES_PAID);
+// 3.5 My Ticket(account as buyer)
+export function DisplayRoyalitiesPaid(buyerAddress) {
+  const { loading, error, data } = useQuery(GET_ROYALITIES_PAID, {
+    variables: { buyer: buyerAddress.toString() },
+  });
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Title>Royalities Paid</Title>
       <Grid container spacing={4}>
-        {data.itemMinteds.map(({ id, tokenId, nftAddress }) => (
+        {data.royalityPaids.map(({ id, tokenId, nftAddress }) => (
           <FeaturedPost
             key={id}
             date="01 Jan 2023"
@@ -110,16 +148,19 @@ export function DisplayActiveItems() {
     </Container>
   );
 }
-// 3.3 My Ticket (account as buyer)
-export function DisplayBoughtItems() {
-  const { loading, error, data } = useQuery(GET_BOUGHT_ITEMS);
+// [3.3] My Ticket (account as buyer)
+export function DisplayBoughtItems(buyerAddress) {
+  const { loading, error, data } = useQuery(GET_BOUGHT_ITEMS, {
+    variables: { buyer: buyerAddress.toString() },
+  });
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Title>Bought Items</Title>
       <Grid container spacing={4}>
-        {data.activeItems.map(({ id, tokenId, nftAddress }) => (
+        {data.itemBoughts.map(({ id, tokenId, nftAddress }) => (
           <FeaturedPost
             key={id}
             date="01 Jan 2023"
@@ -152,16 +193,19 @@ export function DisplayCanceledItems() {
     </Container>
   );
 }
-//3.4 My Ticket (account as seller)
-export function DisplayListedItems() {
-  const { loading, error, data } = useQuery(GET_LISTED_ITEMS);
+//[3.4] My Ticket (account as seller)
+export function DisplayListedItems(sellerAddress) {
+  const { loading, error, data } = useQuery(GET_LISTED_ITEMS, {
+    variables: { seller: sellerAddress.toString() },
+  });
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Title>Listed Items</Title>
       <Grid container spacing={4}>
-        {data.activeItems.map(({ id, tokenId, nftAddress }) => (
+        {data.itemListeds.map(({ id, tokenId, nftAddress }) => (
           <FeaturedPost
             key={id}
             date="01 Jan 2023"

@@ -26,7 +26,14 @@ import Chart from "@/components/Charts/Chart";
 import Deposits from "@/components/Deposits";
 import Orders from "@/components/Tables/Orders";
 import Navigation from "@/components/Navigations/Navigation";
-import { DisplayMintedItems } from "@/src/utils/queryUtility";
+import {
+  DisplayMintedItems,
+  DisplayBoughtItems,
+  DisplayListedItems,
+  DisplayRoyalitiesPaid,
+  DisplayMintedItemsInTable,
+} from "@/src/utils/queryUtility";
+import { useAccount } from "wagmi";
 
 function Copyright(props) {
   return (
@@ -50,6 +57,7 @@ const mdTheme = createTheme();
 
 function HomeContent() {
   const [open, setOpen] = React.useState(true);
+  const { isConnected, address: signerAddress } = useAccount();
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -72,48 +80,80 @@ function HomeContent() {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
+          {!isConnected && <p>Please connect to your wallet...</p>}
+          {isConnected && (
+            <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+              <Grid container spacing={3}>
+                {/* Chart */}
+                <Grid item xs={12} md={8} lg={9}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      height: 240,
+                    }}
+                  >
+                    <Chart />
+                  </Paper>
+                </Grid>
+                {/* Recent Deposits */}
+                <Grid item xs={12} md={4} lg={3}>
+                  <Paper
+                    sx={{
+                      p: 2,
+                      display: "flex",
+                      flexDirection: "column",
+                      height: 240,
+                    }}
+                  >
+                    <Deposits />
+                  </Paper>
+                </Grid>
+                {/* Recent Orders */}
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <DisplayMintedItemsInTable
+                      title="Minted Items"
+                      flexColumnName="Beneficiary"
+                      minterAddress={signerAddress}
+                    />
+                  </Paper>
+                </Grid>
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <DisplayMintedItems minterAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                  </Paper>
+                </Grid>
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <DisplayBoughtItems buyerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                  </Paper>
+                </Grid>
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <DisplayListedItems sellerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                  </Paper>
+                </Grid>
+                <Grid item xs={12}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <DisplayRoyalitiesPaid buyerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                  </Paper>
+                </Grid>
               </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Orders />
-                </Paper>
-              </Grid>
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <DisplayMintedItems minterAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
-                </Paper>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
+              <Copyright sx={{ pt: 4 }} />
+            </Container>
+          )}
         </Box>
       </Box>
     </ThemeProvider>

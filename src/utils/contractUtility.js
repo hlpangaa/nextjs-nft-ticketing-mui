@@ -1,81 +1,38 @@
-import { useQuery } from "@apollo/client";
-import FeaturedPost from "@/components/Cards/FeaturedPost";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Link from "@mui/material/Link";
 import {
-  GET_ACTIVE_ITEMS,
-  GET_ACTIVE_EVENTS,
-  GET_BOUGHT_ITEMS,
-  GET_CANCELED_ITEMS,
-  GET_LISTED_ITEMS,
-  GET_MINTED_ITEMS,
-  GET_ROYALITIES_PAID,
-  GET_CREATED_EVENTS,
-  GET_DISABLED_EVENTS,
-  GET_OWNERSHIP_TRANSFERRED_ITEMS,
-} from "@/constants/subgraphQueries";
+  useAccount,
+  usePrepareContractWrite,
+  useContractWrite,
+  useWaitForTransaction,
+  useContractRead,
+  useNetwork,
+  erc20ABI,
+} from "wagmi";
 
-export function DisplayMintedItems() {
-  const { loading, error, data } = useQuery(GET_MINTED_ITEMS);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
+import { ethers, BigNumber } from "ethers";
 
-  return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={4}>
-        {data.itemMinteds.map(({ id, tokenId, nftAddress }) => (
-          <FeaturedPost
-            key={id}
-            date="01 Jan 2023"
-            title={tokenId}
-            description={nftAddress}
-          ></FeaturedPost>
-        ))}
-      </Grid>
-    </Container>
-  );
-}
+// import from project files
+import nftMarketplaceAbi from "../../constants/NftMarketplace.json";
+import nftFactoryAbi from "../../constants/EventFactory.json";
+import nftAbi from "../../constants/EventContract.json";
 
-export function DisplayActiveItems() {
-  const { loading, error, data } = useQuery(GET_ACTIVE_ITEMS);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
+// project consts
+const marketplaceAddress = "0x0a5537a12d4EF5E274bF4b18bb79FD968CCF667C";
+const nftAddress = "0x8c9a29fd73ece36ff13fe490D4aEe4273750FE57";
+const nftFactoryAddress = "0xcabb9b44a429b56c7DF813F773767223D24910c0";
+const freeNftAddress = "0x1f2fbCc0dAB80847E8fcaC00d8Eacc571A4511E2";
 
-  return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={4}>
-        {data.activeItems.map(({ id, tokenId, nftAddress }) => (
-          <FeaturedPost
-            key={id}
-            date="01 Jan 2023"
-            title={tokenId}
-            description={nftAddress}
-          ></FeaturedPost>
-        ))}
-      </Grid>
-    </Container>
-  );
-}
+const imageUri =
+  "https://gateway.pinata.cloud/ipfs/QmQ3q5h3zkhkG6sXBs2PuKJ5E9tsbpPGcYkcJU5PYcUVCG";
 
-export function DisplayActiveEvents() {
-  const { loading, error, data } = useQuery(GET_ACTIVE_EVENTS);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
-
-  return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={4}>
-        {data.activeEvents.map(({ id, tokenId, nftAddress }) => (
-          <FeaturedPost
-            key={id}
-            date="01 Jan 2023"
-            title={tokenId}
-            description={nftAddress}
-          ></FeaturedPost>
-        ))}
-      </Grid>
-    </Container>
-  );
+export function getMintFee(nftAddress) {
+  const { data: mintFee } = useContractRead({
+    address: nftAddress,
+    abi: nftAbi,
+    functionName: "mintFee",
+    watch: true,
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+  return ethers.utils.formatEther(mintFee);
 }

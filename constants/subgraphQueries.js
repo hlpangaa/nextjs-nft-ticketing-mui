@@ -31,8 +31,8 @@ export const GET_ACTIVE_EVENTS = gql`
 `;
 
 export const GET_BOUGHT_ITEMS = gql`
-  {
-    itemBoughts(first: 20) {
+  query getBoughtItems($buyer: String) {
+    itemBoughts(buyer: $buyer, first: 10) {
       id
       buyer
       nftAddress
@@ -54,8 +54,8 @@ export const GET_CANCELED_ITEMS = gql`
 `;
 
 export const GET_LISTED_ITEMS = gql`
-  {
-    itemListeds(first: 20) {
+  query getListedItems($seller: String) {
+    itemListeds(seller: $seller, first: 20) {
       id
       seller
       nftAddress
@@ -66,8 +66,8 @@ export const GET_LISTED_ITEMS = gql`
 `;
 
 export const GET_ROYALITIES_PAID = gql`
-  {
-    royalityPaids(first: 20) {
+  query getRoyalityPaids($buyer: String) {
+    royalityPaids(buyer: $buyer, first: 20) {
       buyer
       receiver
       nftAddress
@@ -87,17 +87,6 @@ export const GET_MINTED_ITEMS = gql`
     }
   }
 `;
-// export const GET_MINTED_ITEMS = gql`
-//   query getMintedItems($minter: String) {
-//     itemMinteds(where: { minter: $minter }, first: 10) {
-//       beneficiary
-//       id
-//       minter
-//       nftAddress
-//       tokenId
-//     }
-//   }
-// `;
 
 export const GET_CREATED_EVENTS = gql`
   {
