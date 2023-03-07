@@ -19,6 +19,8 @@ import {
 import Title from "@/components/Typography/Title";
 import TranscationTable from "@/components/Tables/TranscationTable";
 import { getMintFee } from "@/src/utils/contractUtility";
+import ClientOnly from "@/src/utils/clientOnly";
+import { useState, useEffect } from "react";
 
 /** Pages
  * 1. My Event
@@ -75,6 +77,7 @@ export function DisplayMintedItems(minterAddress) {
 //useTable
 export function DisplayMintedItemsInTable(props) {
   const { title, flexColumnName, minterAddress, ...rest } = props;
+
   const { loading, error, data } = useQuery(GET_MINTED_ITEMS, {
     variables: { minter: minterAddress.toString() },
   });
@@ -85,19 +88,28 @@ export function DisplayMintedItemsInTable(props) {
   const rows = data.itemMinteds.map((obj) => ({
     ...obj,
     id: obj.id,
-    timestamp: "01 Jan 2023",
+    timestamp: obj.timestamp.toString(),
     hash: obj.nftAddress,
     flexColumn: obj.beneficiary,
     transcationType: "Mint",
-    value: getMintFee(obj.nftAddress),
+    value: "",
+    txHash: obj.txHash,
+    blockNumber: obj.blockNumber,
+    gasPrice: obj.gasPrice,
   }));
 
   return (
-    <TranscationTable
-      title={title}
-      flexColumnName={flexColumnName}
-      rows={rows}
-    ></TranscationTable>
+    <>
+      {loading ? (
+        <div>is Loading</div>
+      ) : (
+        <TranscationTable
+          title={title}
+          flexColumnName={flexColumnName}
+          rows={rows}
+        ></TranscationTable>
+      )}
+    </>
   );
 }
 

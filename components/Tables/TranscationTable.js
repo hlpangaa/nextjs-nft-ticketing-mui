@@ -6,7 +6,13 @@ import TableCell from "@mui/material/TableCell";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Title from "../Typography/Title";
-import { handleAddress } from "@/src/utils/stringUtility";
+import {
+  handleAddress,
+  handleTimeStamp,
+  handleCurrencyFormat,
+} from "@/src/utils/stringUtility";
+import { DisplayMintFee, getMintFee } from "@/src/utils/contractUtility";
+
 function preventDefault(event) {
   event.preventDefault();
 }
@@ -29,16 +35,24 @@ export default function TranscationTable(props) {
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.timestamp}</TableCell>
+              <TableCell>{handleTimeStamp(row.timestamp)}</TableCell>
               <TableCell>{row.transcationType}</TableCell>
               <TableCell>
-                {handleAddress(row.hash)}{" "}
-                <Link href={`https://goerli.etherscan.io/tx/${row?.hash}`}>
+                {handleAddress(row.txHash)}{" "}
+                <Link href={`https://goerli.etherscan.io/tx/${row?.txHash}`}>
                   (view)
                 </Link>
               </TableCell>
-              <TableCell>{handleAddress(row.flexColumn)}</TableCell>
-              <TableCell align="right">{`${row.value} ETH`}</TableCell>
+              <TableCell>
+                {handleAddress(row.flexColumn)}
+                <Link
+                  href={`https://goerli.etherscan.io/address/${row?.flexColumn}`}
+                >
+                  (view)
+                </Link>
+              </TableCell>
+
+              <DisplayMintFee nftAddress={row.nftAddress} />
             </TableRow>
           ))}
         </TableBody>

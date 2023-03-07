@@ -8,12 +8,22 @@ import {
   erc20ABI,
 } from "wagmi";
 
+import { readContract } from "@wagmi/core";
+
 import { ethers, BigNumber } from "ethers";
 
 // import from project files
 import nftMarketplaceAbi from "../../constants/NftMarketplace.json";
 import nftFactoryAbi from "../../constants/EventFactory.json";
 import nftAbi from "../../constants/EventContract.json";
+
+import TableCell from "@mui/material/TableCell";
+import { useState, useEffect } from "react";
+import {
+  handleAddress,
+  handleTimeStamp,
+  handleCurrencyFormat,
+} from "@/src/utils/stringUtility";
 
 // project consts
 const marketplaceAddress = "0x0a5537a12d4EF5E274bF4b18bb79FD968CCF667C";
@@ -24,7 +34,8 @@ const freeNftAddress = "0x1f2fbCc0dAB80847E8fcaC00d8Eacc571A4511E2";
 const imageUri =
   "https://gateway.pinata.cloud/ipfs/QmQ3q5h3zkhkG6sXBs2PuKJ5E9tsbpPGcYkcJU5PYcUVCG";
 
-export function getMintFee(nftAddress) {
+export function DisplayMintFee(props) {
+  const { nftAddress, ...rest } = props;
   const { data: mintFee } = useContractRead({
     address: nftAddress,
     abi: nftAbi,
@@ -34,5 +45,9 @@ export function getMintFee(nftAddress) {
       console.log("Error", error);
     },
   });
-  return ethers.utils.formatEther(mintFee);
+  // mintFee is string
+  const bigNumber = BigNumber.from(mintFee);
+  const eth = handleCurrencyFormat(bigNumber, "ETH");
+
+  return <TableCell align="right">{`${eth} ETH`}</TableCell>;
 }

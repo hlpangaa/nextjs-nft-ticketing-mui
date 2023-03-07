@@ -16,6 +16,10 @@ export const GET_ACTIVE_ITEMS = gql`
       nftAddress
       tokenId
       price
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -26,6 +30,10 @@ export const GET_ACTIVE_EVENTS = gql`
       id
       creator
       nft
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -38,6 +46,10 @@ export const GET_BOUGHT_ITEMS = gql`
       nftAddress
       tokenId
       price
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -49,6 +61,10 @@ export const GET_CANCELED_ITEMS = gql`
       seller
       nftAddress
       tokenId
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -61,6 +77,10 @@ export const GET_LISTED_ITEMS = gql`
       nftAddress
       tokenId
       price
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -73,6 +93,10 @@ export const GET_ROYALITIES_PAID = gql`
       nftAddress
       tokenId
       royaltyAmount
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -84,6 +108,10 @@ export const GET_MINTED_ITEMS = gql`
       minter
       nftAddress
       tokenId
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -94,6 +122,10 @@ export const GET_CREATED_EVENTS = gql`
       id
       creator
       nft
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -103,6 +135,10 @@ export const GET_DISABLED_EVENTS = gql`
       id
       caller
       nft
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
@@ -112,6 +148,10 @@ export const GET_OWNERSHIP_TRANSFERRED_ITEMS = gql`
       id
       previousOwner
       newOwner
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
     }
   }
 `;
