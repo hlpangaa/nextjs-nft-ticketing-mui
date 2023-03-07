@@ -108,7 +108,7 @@ function HomeContent() {
               </Grid>
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <DisplayMintedItems />
+                  <DisplayMintedItems minterAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
                 </Paper>
               </Grid>
             </Grid>

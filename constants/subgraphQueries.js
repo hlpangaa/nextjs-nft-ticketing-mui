@@ -7,7 +7,7 @@ import { gql } from "@apollo/client";
 export const GET_ACTIVE_ITEMS = gql`
   {
     activeItems(
-      first: 5
+      first: 20
       where: { buyer: "0x0000000000000000000000000000000000000000" }
     ) {
       id
@@ -22,7 +22,7 @@ export const GET_ACTIVE_ITEMS = gql`
 
 export const GET_ACTIVE_EVENTS = gql`
   {
-    activeEvents(first: 5) {
+    activeEvents(first: 20) {
       id
       creator
       nft
@@ -32,7 +32,7 @@ export const GET_ACTIVE_EVENTS = gql`
 
 export const GET_BOUGHT_ITEMS = gql`
   {
-    itemBoughts(first: 5) {
+    itemBoughts(first: 20) {
       id
       buyer
       nftAddress
@@ -44,7 +44,7 @@ export const GET_BOUGHT_ITEMS = gql`
 
 export const GET_CANCELED_ITEMS = gql`
   {
-    itemCanceleds(first: 5) {
+    itemCanceleds(first: 20) {
       id
       seller
       nftAddress
@@ -55,7 +55,7 @@ export const GET_CANCELED_ITEMS = gql`
 
 export const GET_LISTED_ITEMS = gql`
   {
-    itemListeds(first: 5) {
+    itemListeds(first: 20) {
       id
       seller
       nftAddress
@@ -67,7 +67,7 @@ export const GET_LISTED_ITEMS = gql`
 
 export const GET_ROYALITIES_PAID = gql`
   {
-    royalityPaids(first: 5) {
+    royalityPaids(first: 20) {
       buyer
       receiver
       nftAddress
@@ -77,19 +77,31 @@ export const GET_ROYALITIES_PAID = gql`
   }
 `;
 export const GET_MINTED_ITEMS = gql`
-  {
-    itemMinteds(first: 5) {
-      minter
+  query getMintedItems($minter: String) {
+    itemMinteds(minter: $minter, first: 10) {
       beneficiary
+      id
+      minter
       nftAddress
       tokenId
     }
   }
 `;
+// export const GET_MINTED_ITEMS = gql`
+//   query getMintedItems($minter: String) {
+//     itemMinteds(where: { minter: $minter }, first: 10) {
+//       beneficiary
+//       id
+//       minter
+//       nftAddress
+//       tokenId
+//     }
+//   }
+// `;
 
 export const GET_CREATED_EVENTS = gql`
   {
-    contractCreateds(first: 5) {
+    contractCreateds(first: 20) {
       id
       creator
       nft
@@ -98,7 +110,7 @@ export const GET_CREATED_EVENTS = gql`
 `;
 export const GET_DISABLED_EVENTS = gql`
   {
-    contractDisableds(first: 5) {
+    contractDisableds(first: 20) {
       id
       caller
       nft
@@ -107,7 +119,7 @@ export const GET_DISABLED_EVENTS = gql`
 `;
 export const GET_OWNERSHIP_TRANSFERRED_ITEMS = gql`
   {
-    ownershipTransferreds(first: 5) {
+    ownershipTransferreds(first: 20) {
       id
       previousOwner
       newOwner
