@@ -46,8 +46,10 @@ export function DisplayMintFee(props) {
     },
   });
   // mintFee is string
-  const bigNumber = BigNumber.from(mintFee);
-  const eth = handleCurrencyFormat(bigNumber, "ETH");
-
-  return <TableCell align="right">{`${eth} ETH`}</TableCell>;
+  if (typeof num === "bigint")
+    return <TableCell align="right">{`${eth} ETH`}</TableCell>;
+  else if (typeof num === "string" || typeof num === "number") {
+    const eth = handleCurrencyFormat(bigNumber, "ETH");
+    return <TableCell align="right">{`${eth} ETH`}</TableCell>;
+  } else return null;
 }

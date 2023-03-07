@@ -21,6 +21,7 @@ import TranscationTable from "@/components/Tables/TranscationTable";
 import { getMintFee } from "@/src/utils/contractUtility";
 import ClientOnly from "@/src/utils/clientOnly";
 import { useState, useEffect } from "react";
+import RecentEventCard from "@/components/Cards/RecentEventCard";
 
 /** Pages
  * 1. My Event
@@ -152,7 +153,7 @@ export function DisplayRoyalitiesPaid(buyerAddress) {
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Title>Royalities Paid</Title>
-      <Grid container spacing={4}>
+      {/* <Grid container spacing={4}>
         {data.royalityPaids.map(({ id, tokenId, nftAddress }) => (
           <FeaturedPost
             key={id}
@@ -161,7 +162,7 @@ export function DisplayRoyalitiesPaid(buyerAddress) {
             description={nftAddress}
           ></FeaturedPost>
         ))}
-      </Grid>
+      </Grid> */}
     </Container>
   );
 }
@@ -187,6 +188,7 @@ export function DisplayActiveItems() {
     </Container>
   );
 }
+
 // [3.3] My Ticket (account as buyer)
 export function DisplayBoughtItems(buyerAddress) {
   const { loading, error, data } = useQuery(GET_BOUGHT_ITEMS, {
@@ -258,24 +260,35 @@ export function DisplayListedItems(sellerAddress) {
 }
 
 // 6.1 Recent Events (get top 20)
-export function DisplayActiveEvents() {
+export function DisplayActiveEvents(props) {
+  const { title, signerAddress, ...rest } = props;
+
   const { loading, error, data } = useQuery(GET_ACTIVE_EVENTS);
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
+  const rows = data.activeEvents.map((obj) => ({
+    ...obj,
+    id: obj.id,
+    timestamp: obj.timestamp.toString(),
+    hash: obj.nft,
+    flexColumn: obj.creator,
+    transcationType: "Recent Events",
+    value: "",
+    txHash: obj.txHash,
+    blockNumber: obj.blockNumber,
+    gasPrice: obj.gasPrice,
+  }));
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={4}>
-        {data.activeEvents.map(({ id, tokenId, nftAddress }) => (
-          <FeaturedPost
-            key={id}
-            date="01 Jan 2023"
-            title={tokenId}
-            description={nftAddress}
-          ></FeaturedPost>
-        ))}
-      </Grid>
-    </Container>
+    <>
+      <Title>{title}</Title>
+      {loading ? (
+        <div>is Loading</div>
+      ) : (
+        rows.map((row) => <RecentEventCard rows={rows} title={title} />)
+      )}
+    </>
   );
 }
 

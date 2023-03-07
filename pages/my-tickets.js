@@ -159,10 +159,7 @@ function HomeContent() {
                     <Paper
                       sx={{ p: 2, display: "flex", flexDirection: "column" }}
                     >
-                      <DisplayRoyalitiesPaid
-                        key={1}
-                        buyerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8"
-                      />
+                      <DisplayRoyalitiesPaid buyerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
                     </Paper>
                   </Grid>
                 </Grid>

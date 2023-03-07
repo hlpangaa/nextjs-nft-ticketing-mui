@@ -1,0 +1,34 @@
+[
+    {
+        "type": "File",
+        "name": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui/src/utils/queryUtility.js",
+        "parent_id": null,
+        "workspaceRoot": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui",
+        "workspacePath": "src/utils/queryUtility.js",
+        "id": "WEX9lQgahDfAu6qv"
+    },
+    {
+        "type": "File",
+        "name": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui/src/utils/contractUtility.js",
+        "parent_id": null,
+        "workspaceRoot": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui",
+        "workspacePath": "src/utils/contractUtility.js",
+        "id": "ZzEfcV9r4Y0b8QCK"
+    },
+    {
+        "type": "File",
+        "name": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui/src/utils/stringUtility.js",
+        "parent_id": null,
+        "workspaceRoot": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui",
+        "workspacePath": "src/utils/stringUtility.js",
+        "id": "5tkueR4BnDJCj2iZ"
+    },
+    {
+        "type": "File",
+        "name": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui/pages/my-tickets.js",
+        "parent_id": null,
+        "workspaceRoot": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui",
+        "workspacePath": "pages/my-tickets.js",
+        "id": "oXPjDUngMKAfiJ16"
+    }
+]
