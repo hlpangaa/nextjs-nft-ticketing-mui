@@ -32,6 +32,7 @@ import {
   DisplayListedItems,
   DisplayRoyalitiesPaid,
   DisplayMintedItemsInTable,
+  DisplayMyOwnItemsInTable,
 } from "@/src/utils/queryUtility";
 import { useAccount } from "wagmi";
 import ClientOnly from "@/src/utils/clientOnly";
@@ -108,6 +109,17 @@ function HomeContent() {
                       }}
                     >
                       <Deposits />
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <DisplayMyOwnItemsInTable
+                        title="Minted Items"
+                        flexColumnName="Beneficiary"
+                        minterAddress={signerAddress}
+                      />
                     </Paper>
                   </Grid>
                   {/* Recent Orders */}

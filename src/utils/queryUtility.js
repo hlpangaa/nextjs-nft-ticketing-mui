@@ -31,7 +31,7 @@ import { useState, useEffect } from "react";
  * 2. Craete Event - doesn't need queryUtility
  * 3. My Tickets
  * - 3.1 NFT that I owned (enumable) *********
- * - 3.2 NFT that I minted
+ * - [3.2] NFT that I minted
  * - 3.3 NFT that I bought
  * - 3.4 NFT that I listed in P2P market
  * - 3.5 Royalities that I paid
@@ -46,10 +46,37 @@ import { useState, useEffect } from "react";
  * Display type:
  * Record purpose - block, timestamp ,Txhash, transcation type, counter party
  * invoice purpose - price/ amount - listing/minted/bought
+ * URI
  *  */
 
+// I wish to know the information of my comming events
+export function DisplayMyOwnItemsInTable(props) {
+  const { title, flexColumnName, minterAddress, ...rest } = props;
+
+  const { loading, error, data } = useQuery(GET_MINTED_ITEMS, {
+    variables: { minter: minterAddress.toString() },
+  });
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+
+  const rows = data.itemMinteds.map((obj) => ({
+    ...obj,
+    id: obj.id,
+    timestamp: obj.timestamp.toString(),
+    hash: obj.nftAddress,
+    flexColumn: obj.beneficiary,
+    transcationType: "Mint",
+    value: "",
+    txHash: obj.txHash,
+    blockNumber: obj.blockNumber,
+    gasPrice: obj.gasPrice,
+  }));
+
+  return <></>;
+}
+
 // 1.3 My Event: DisplayCreatedEvents => (nft) => call query for itemMinted + call contract for mintedFee
-// [3.2] My Ticket (account as minter)
 export function DisplayMintedItems(minterAddress) {
   const { loading, error, data } = useQuery(GET_MINTED_ITEMS, {
     variables: { minter: minterAddress.toString() },
@@ -74,7 +101,7 @@ export function DisplayMintedItems(minterAddress) {
     </Container>
   );
 }
-//useTable
+// [3.2] My Ticket (account as minter)
 export function DisplayMintedItemsInTable(props) {
   const { title, flexColumnName, minterAddress, ...rest } = props;
 
