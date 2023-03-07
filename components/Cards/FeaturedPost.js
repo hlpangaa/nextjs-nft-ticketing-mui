@@ -8,7 +8,10 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 
 function FeaturedPost(props) {
-  const { post } = props;
+  const { title, date, description, ...rest } = props;
+
+  const image =
+    "https://gateway.pinata.cloud/ipfs/QmQ3q5h3zkhkG6sXBs2PuKJ5E9tsbpPGcYkcJU5PYcUVCG";
 
   return (
     <Grid item xs={12} md={6}>
@@ -16,13 +19,13 @@ function FeaturedPost(props) {
         <Card sx={{ display: "flex" }}>
           <CardContent sx={{ flex: 1 }}>
             <Typography component="h2" variant="h5">
-              {post.title}
+              {title}
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
-              {post.date}
+              {date}
             </Typography>
             <Typography variant="subtitle1" paragraph>
-              {post.description}
+              {description}
             </Typography>
             <Typography variant="subtitle1" color="primary">
               Continue reading...
@@ -31,8 +34,7 @@ function FeaturedPost(props) {
           <CardMedia
             component="img"
             sx={{ width: 160, display: { xs: "none", sm: "block" } }}
-            image={post.image}
-            alt={post.imageLabel}
+            image={image}
           />
         </Card>
       </CardActionArea>

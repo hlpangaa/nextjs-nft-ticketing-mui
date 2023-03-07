@@ -26,6 +26,7 @@ import Chart from "@/components/Charts/Chart";
 import Deposits from "@/components/Deposits";
 import Orders from "@/components/Tables/Orders";
 import Navigation from "@/components/Navigations/Navigation";
+import { DisplayMintedItems } from "@/src/utils/queryUtility";
 
 function Copyright(props) {
   return (
@@ -103,6 +104,12 @@ function HomeContent() {
               <Grid item xs={12}>
                 <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
                   <Orders />
+                </Paper>
+              </Grid>
+              {/*DisplayItems */}
+              <Grid item xs={12}>
+                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                  <DisplayMintedItems />
                 </Paper>
               </Grid>
             </Grid>
