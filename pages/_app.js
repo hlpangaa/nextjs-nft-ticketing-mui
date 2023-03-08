@@ -32,7 +32,7 @@ const { chains, provider } = configureChains(
 );
 //apollo graphQL const
 const apolloClient = new ApolloClient({
-  uri: "https://api.studio.thegraph.com/query/40468/nftticketing/0.0.7",
+  uri: "https://api.studio.thegraph.com/query/40468/nftticketing/1.1.2",
   cache: new InMemoryCache(),
 });
 

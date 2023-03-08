@@ -26,6 +26,16 @@ import Chart from "@/components/Charts/Chart";
 import Deposits from "@/components/Deposits";
 import Orders from "@/components/Tables/Orders";
 import Navigation from "@/components/Navigations/Navigation";
+import {
+  DisplayMintedItems,
+  DisplayBoughtItems,
+  DisplayListedItems,
+  DisplayRoyalitiesPaid,
+  DisplayMintedItemsInTable,
+  DisplayMyOwnItemsInTable,
+} from "@/src/utils/queryUtility";
+import { useAccount } from "wagmi";
+import ClientOnly from "@/src/utils/clientOnly";
 
 function Copyright(props) {
   return (
@@ -49,68 +59,117 @@ const mdTheme = createTheme();
 
 function HomeContent() {
   const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+  const { isConnected, address: signerAddress } = useAccount();
 
   return (
-    <ThemeProvider theme={mdTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <Navigation />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              {/* Chart */}
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
-              </Grid>
-              {/* Recent Deposits */}
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: "flex",
-                    flexDirection: "column",
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              {/* Recent Orders */}
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                  <Orders />
-                </Paper>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
+    <ClientOnly>
+      <ThemeProvider theme={mdTheme}>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <Navigation />
+          <Box
+            component="main"
+            sx={{
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[100]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "100vh",
+              overflow: "auto",
+            }}
+          >
+            <Toolbar />
+            {!isConnected ? (
+              <div>Please connect to your wallet...</div>
+            ) : (
+              <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+                <Grid container spacing={3}>
+                  {/* Chart */}
+                  <Grid item xs={12} md={8} lg={9}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        height: 240,
+                      }}
+                    >
+                      <Chart />
+                    </Paper>
+                  </Grid>
+                  {/* Recent Deposits */}
+                  <Grid item xs={12} md={4} lg={3}>
+                    <Paper
+                      sx={{
+                        p: 2,
+                        display: "flex",
+                        flexDirection: "column",
+                        height: 240,
+                      }}
+                    >
+                      <Deposits />
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <DisplayMyOwnItemsInTable
+                        title="Minted Items"
+                        flexColumnName="Beneficiary"
+                        minterAddress={signerAddress}
+                      />
+                    </Paper>
+                  </Grid>
+                  {/* Recent Orders */}
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <DisplayMintedItemsInTable
+                        title="Minted Items"
+                        flexColumnName="Beneficiary"
+                        minterAddress={signerAddress}
+                      />
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <DisplayMintedItems minterAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <DisplayBoughtItems buyerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <DisplayListedItems sellerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                    </Paper>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Paper
+                      sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                    >
+                      <DisplayRoyalitiesPaid buyerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                    </Paper>
+                  </Grid>
+                </Grid>
+                <Copyright sx={{ pt: 4 }} />
+              </Container>
+            )}
+          </Box>
         </Box>
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
+    </ClientOnly>
   );
 }
 

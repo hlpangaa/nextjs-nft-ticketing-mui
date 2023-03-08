@@ -32,6 +32,10 @@ import MainFeaturedPost from "@/components/Cards/MainFeaturedPost";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
+import { useAccount } from "wagmi";
+import ClientOnly from "@/src/utils/clientOnly";
+import { DisplayActiveEvents } from "@/src/utils/queryUtility";
+import Title from "@/components/Typography/Title";
 
 function Copyright(props) {
   return (
@@ -125,44 +129,54 @@ function HomeContent() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const { isConnected, address: signerAddress } = useAccount();
 
   return (
-    <ThemeProvider theme={mdTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <Navigation />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg">
-            <main>
-              <MainFeaturedPost post={mainFeaturedPost} />
-              <Grid container spacing={4}>
-                {featuredPosts.map((post) => (
-                  <FeaturedPost key={post.title} post={post} />
-                ))}
-              </Grid>
-              <Grid container spacing={5} sx={{ mt: 3 }}>
-                <Main title="From the firehose" posts={posts} />
-              </Grid>
-            </main>
-          </Container>
+    <ClientOnly>
+      <ThemeProvider theme={mdTheme}>
+        <Box sx={{ display: "flex" }}>
+          <CssBaseline />
+          <Navigation />
+          <Box
+            component="main"
+            sx={{
+              backgroundColor: (theme) =>
+                theme.palette.mode === "light"
+                  ? theme.palette.grey[100]
+                  : theme.palette.grey[900],
+              flexGrow: 1,
+              height: "100vh",
+              overflow: "auto",
+            }}
+          >
+            <Toolbar />
+            <Container maxWidth="lg">
+              <main>
+                <Grid container spacing={4}>
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <DisplayActiveEvents minterAddress={signerAddress} />
+                  </Paper>
+                </Grid>
+              </main>
+            </Container>
+          </Box>
         </Box>
-      </Box>
-    </ThemeProvider>
+      </ThemeProvider>
+    </ClientOnly>
   );
 }
 
 export default function Home() {
   return <HomeContent />;
+}
+
+{
+  /* <Grid container spacing={4}>
+{featuredPosts.map((post) => (
+  <FeaturedPost key={post.title} post={post} />
+))}
+</Grid>
+<MainFeaturedPost post={mainFeaturedPost} /> */
 }

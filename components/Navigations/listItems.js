@@ -12,6 +12,9 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 
 export const mainListItems = (
   <React.Fragment>
+    <ListSubheader component="div" inset>
+      Event Organizer
+    </ListSubheader>
     <ListItemButton href="/my-events">
       <ListItemIcon>
         <DashboardIcon />
@@ -24,11 +27,20 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Create Event" />
     </ListItemButton>
+    <ListSubheader component="div" inset>
+      Event Attendee
+    </ListSubheader>
     <ListItemButton href="/my-tickets">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
       <ListItemText primary="My Tickets" />
+    </ListItemButton>
+    <ListItemButton href="/mint-tickets">
+      <ListItemIcon>
+        <LayersIcon />
+      </ListItemIcon>
+      <ListItemText primary="Mint Ticket" />
     </ListItemButton>
     <ListItemButton href="/sell-tickets">
       <ListItemIcon>
@@ -41,12 +53,6 @@ export const mainListItems = (
         <BarChartIcon />
       </ListItemIcon>
       <ListItemText primary="Recent Events" />
-    </ListItemButton>
-    <ListItemButton href="/others">
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Integrations" />
     </ListItemButton>
   </React.Fragment>
 );

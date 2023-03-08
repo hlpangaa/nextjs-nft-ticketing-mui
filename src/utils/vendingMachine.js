@@ -31,7 +31,7 @@ const freeNftAddress = "0x1f2fbCc0dAB80847E8fcaC00d8Eacc571A4511E2";
 const imageUri =
   "https://gateway.pinata.cloud/ipfs/QmQ3q5h3zkhkG6sXBs2PuKJ5E9tsbpPGcYkcJU5PYcUVCG";
 
-export default function page() {
+export function VendingMachine() {
   //react hook
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
