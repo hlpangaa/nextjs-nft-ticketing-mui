@@ -115,11 +115,7 @@ function HomeContent() {
                     <Paper
                       sx={{ p: 2, display: "flex", flexDirection: "column" }}
                     >
-                      <DisplayMyOwnItemsInTable
-                        title="Minted Items"
-                        flexColumnName="Beneficiary"
-                        minterAddress={signerAddress}
-                      />
+                      <DisplayMyOwnItemsInTable signerAddress={signerAddress} />
                     </Paper>
                   </Grid>
                   {/* Recent Orders */}
@@ -130,7 +126,7 @@ function HomeContent() {
                       <DisplayMintedItemsInTable
                         title="Minted Items"
                         flexColumnName="Beneficiary"
-                        minterAddress={signerAddress}
+                        signerAddress={signerAddress}
                       />
                     </Paper>
                   </Grid>
@@ -138,28 +134,28 @@ function HomeContent() {
                     <Paper
                       sx={{ p: 2, display: "flex", flexDirection: "column" }}
                     >
-                      <DisplayMintedItems minterAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                      <DisplayMintedItems signerAddress={signerAddress} />
                     </Paper>
                   </Grid>
                   <Grid item xs={12}>
                     <Paper
                       sx={{ p: 2, display: "flex", flexDirection: "column" }}
                     >
-                      <DisplayBoughtItems buyerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                      <DisplayBoughtItems signerAddress={signerAddress} />
                     </Paper>
                   </Grid>
                   <Grid item xs={12}>
                     <Paper
                       sx={{ p: 2, display: "flex", flexDirection: "column" }}
                     >
-                      <DisplayListedItems sellerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                      <DisplayListedItems signerAddress={signerAddress} />
                     </Paper>
                   </Grid>
                   <Grid item xs={12}>
                     <Paper
                       sx={{ p: 2, display: "flex", flexDirection: "column" }}
                     >
-                      <DisplayRoyalitiesPaid buyerAddress="0x0A270fB0CEa1cCB113860B0Af6CbB98c1a0c04C8" />
+                      <DisplayRoyalitiesPaid signerAddress={signerAddress} />
                     </Paper>
                   </Grid>
                 </Grid>

@@ -38,6 +38,21 @@ export const GET_ACTIVE_EVENTS = gql`
   }
 `;
 
+export const GET_OWNED_ITEMS = gql`
+  query getBoughtItems($owner: String) {
+    itemOwneds(first: 20, owner: $seller) {
+      id
+      owner
+      nftAddress
+      tokenId
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
+    }
+  }
+`;
+
 export const GET_BOUGHT_ITEMS = gql`
   query getBoughtItems($buyer: String) {
     itemBoughts(buyer: $buyer, first: 10) {
