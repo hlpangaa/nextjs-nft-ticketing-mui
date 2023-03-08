@@ -15,6 +15,7 @@ import {
   GET_CREATED_EVENTS,
   GET_DISABLED_EVENTS,
   GET_OWNERSHIP_TRANSFERRED_ITEMS,
+  GET_OWNED_ITEMS,
 } from "@/constants/subgraphQueries";
 import Title from "@/components/Typography/Title";
 import TranscationTable from "@/components/Tables/TranscationTable";
@@ -59,35 +60,44 @@ import ActionAreaCard from "@/components/Cards/ActionAreaCard";
 
 // I wish to know the information of my comming events
 export function DisplayMyOwnItemsInTable(props) {
-  const { title, flexColumnName, minterAddress, ...rest } = props;
+  const { signerAddress, ...rest } = props;
 
-  const { loading, error, data } = useQuery(GET_MINTED_ITEMS, {
-    variables: { minter: minterAddress.toString() },
+  const { loading, error, data } = useQuery(GET_OWNED_ITEMS, {
+    variables: { owner: signerAddress.toString() },
   });
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
-  const rows = data.itemMinteds.map((obj) => ({
+  const rows = data.itemOwneds.map((obj) => ({
     ...obj,
     id: obj.id,
     timestamp: obj.timestamp.toString(),
-    hash: obj.nftAddress,
-    flexColumn: obj.beneficiary,
+    nftAddress: obj.nftAddress,
+    owner: obj.owner,
     transcationType: "Mint",
-    value: "",
+    tokenId: obj.tokenId,
     txHash: obj.txHash,
     blockNumber: obj.blockNumber,
     gasPrice: obj.gasPrice,
   }));
 
-  return <></>;
+  return (
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Title>My Tickets </Title>
+      <Grid container spacing={4}>
+        {rows.map((row) => (
+          <ActionAreaCard key={row.id} row={row} />
+        ))}
+      </Grid>
+    </Container>
+  );
 }
 
 // 1.3 My Event: DisplayCreatedEvents => (nft) => call query for itemMinted + call contract for mintedFee
-export function DisplayMintedItems(minterAddress) {
+export function DisplayMintedItems(signerAddress) {
   const { loading, error, data } = useQuery(GET_MINTED_ITEMS, {
-    variables: { minter: minterAddress.toString() },
+    variables: { minter: signerAddress.toString() },
   });
 
   if (loading) return <p>Loading...</p>;
@@ -111,10 +121,10 @@ export function DisplayMintedItems(minterAddress) {
 }
 // [3.2] My Ticket (account as minter)
 export function DisplayMintedItemsInTable(props) {
-  const { title, flexColumnName, minterAddress, ...rest } = props;
+  const { title, flexColumnName, signerAddress, ...rest } = props;
 
   const { loading, error, data } = useQuery(GET_MINTED_ITEMS, {
-    variables: { minter: minterAddress.toString() },
+    variables: { minter: signerAddress.toString() },
   });
 
   if (loading) return <p>Loading...</p>;
@@ -266,7 +276,7 @@ export function DisplayListedItems(sellerAddress) {
   );
 }
 
-// 6.1 Recent Events (get top 20)
+// [6.1] Recent Events (get top 20)
 export function DisplayActiveEvents(props) {
   const { signerAddress, ...rest } = props;
 
