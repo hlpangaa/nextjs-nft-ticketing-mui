@@ -8,8 +8,8 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 
 function FeaturedPost(props) {
-  const { rows, title, ...rest } = props;
-
+  const { row, ...rest } = props;
+  console.log(row);
   const image =
     "https://gateway.pinata.cloud/ipfs/QmQ3q5h3zkhkG6sXBs2PuKJ5E9tsbpPGcYkcJU5PYcUVCG";
 
@@ -19,14 +19,15 @@ function FeaturedPost(props) {
         <Card sx={{ display: "flex" }}>
           <CardContent sx={{ flex: 1 }}>
             <Typography component="h2" variant="h5">
-              {title}
+              {row.hash}
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
-              {date}
+              {row.timestamp}
             </Typography>
             <Typography variant="subtitle1" paragraph>
-              {description}
+              {row.hash}
             </Typography>
+            <Typography variant="subtitle1" color="primary"></Typography>
             <Typography variant="subtitle1" color="primary">
               Continue reading...
             </Typography>

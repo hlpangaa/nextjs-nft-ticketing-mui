@@ -35,6 +35,7 @@ import TwitterIcon from "@mui/icons-material/Twitter";
 import { useAccount } from "wagmi";
 import ClientOnly from "@/src/utils/clientOnly";
 import { DisplayActiveEvents } from "@/src/utils/queryUtility";
+import Title from "@/components/Typography/Title";
 
 function Copyright(props) {
   return (
@@ -151,12 +152,12 @@ function HomeContent() {
             <Toolbar />
             <Container maxWidth="lg">
               <main>
-                {/*Active Events*/}
                 <Grid container spacing={4}>
-                  <DisplayActiveEvents
-                    title={"Recent Events"}
-                    minterAddress={signerAddress}
-                  />
+                  <Paper
+                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
+                  >
+                    <DisplayActiveEvents minterAddress={signerAddress} />
+                  </Paper>
                 </Grid>
               </main>
             </Container>

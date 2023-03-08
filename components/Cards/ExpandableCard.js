@@ -14,9 +14,25 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ShareIcon from "@mui/icons-material/Share";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { useState, useEffect } from "react";
+import nftMarketplaceAbi from "../../constants/NftMarketplace.json";
+import nftFactoryAbi from "../../constants/EventFactory.json";
+import nftAbi from "../../constants/EventContract.json";
+import Image from "next/image";
+import { ethers } from "ethers";
+
+import {
+  useAccount,
+  usePrepareContractWrite,
+  useContractWrite,
+  useWaitForTransaction,
+  useContractRead,
+  useNetwork,
+  erc20ABI,
+} from "wagmi";
 
 const ExpandMore = styled((props) => {
-  const { expand, ...other } = props;
+  const { expand, row, ...other } = props;
   return <IconButton {...other} />;
 })(({ theme, expand }) => ({
   transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
@@ -26,12 +42,59 @@ const ExpandMore = styled((props) => {
   }),
 }));
 
-export default function RecipeReviewCard() {
+export default function RecipeReviewCard(props) {
+  const { row, signerAddress, ...other } = props;
   const [expanded, setExpanded] = React.useState(false);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
+  const nftAddress = "0x8c9a29fd73ece36ff13fe490D4aEe4273750FE57";
+  //react hook
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const [field, setField] = useState("");
+
+  // URL
+  const [imageURI, setImageURI] = useState("");
+  const [tokenName, setTokenName] = useState("");
+  const [tokenDescription, setTokenDescription] = useState("");
+
+  const { data: URI } = useContractRead({
+    address: nftAddress,
+    abi: nftAbi,
+    functionName: "contractURI",
+    watch: true,
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+
+  async function getMetaDataFromURI(URI) {
+    // const tokenURI = await getTokenURI();
+    console.log(`The TokenURI is ${URI}`);
+
+    if (URI) {
+      const requestURL = URI.replace("ipfs://", "https://ipfs.io/ipfs/");
+      const tokenURIResponse = await (await fetch(requestURL)).json();
+      const imageURI = tokenURIResponse.image;
+      const imageURIURL = imageURI.replace("ipfs://", "https://ipfs.io/ipfs/");
+      setImageURI(imageURIURL);
+      setTokenName(tokenURIResponse.name);
+      setTokenDescription(tokenURIResponse.description);
+    }
+  }
+  console.log(URI);
+  console.log(imageURI);
+  console.log(tokenName);
+  console.log(tokenDescription);
+
+  useEffect(() => {
+    if (URI) {
+      setField(URI.toString());
+      getMetaDataFromURI(URI);
+    }
+  }, [URI]);
 
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -46,20 +109,18 @@ export default function RecipeReviewCard() {
             <MoreVertIcon />
           </IconButton>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+        title={tokenName}
+        subheader={row.timestamp}
       />
       <CardMedia
         component="img"
         height="194"
-        image="/static/images/cards/paella.jpg"
+        image={imageURI}
         alt="Paella dish"
       />
       <CardContent>
         <Typography variant="body2" color="text.secondary">
-          This impressive paella is a perfect party dish and a fun meal to cook
-          together with your guests. Add 1 cup of frozen peas along with the
-          mussels, if you like.
+          {tokenDescription}
         </Typography>
       </CardContent>
       <CardActions disableSpacing>

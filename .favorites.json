@@ -30,5 +30,13 @@
         "workspaceRoot": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui",
         "workspacePath": "pages/my-tickets.js",
         "id": "oXPjDUngMKAfiJ16"
+    },
+    {
+        "type": "File",
+        "name": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui/pages/recent-events.js",
+        "parent_id": null,
+        "workspaceRoot": "/Users/doge/nft-ticketing/nextjs-nft-ticketing-mui",
+        "workspacePath": "pages/recent-events.js",
+        "id": "lth46nq5fcwKGiUZ"
     }
 ]

@@ -22,6 +22,13 @@ import { getMintFee } from "@/src/utils/contractUtility";
 import ClientOnly from "@/src/utils/clientOnly";
 import { useState, useEffect } from "react";
 import RecentEventCard from "@/components/Cards/RecentEventCard";
+import ExpandableCard from "@/components/Cards/ExpandableCard";
+import {
+  handleAddress,
+  handleTimeStamp,
+  handleCurrencyFormat,
+} from "@/src/utils/stringUtility";
+import ActionAreaCard from "@/components/Cards/ActionAreaCard";
 
 /** Pages
  * 1. My Event
@@ -261,7 +268,7 @@ export function DisplayListedItems(sellerAddress) {
 
 // 6.1 Recent Events (get top 20)
 export function DisplayActiveEvents(props) {
-  const { title, signerAddress, ...rest } = props;
+  const { signerAddress, ...rest } = props;
 
   const { loading, error, data } = useQuery(GET_ACTIVE_EVENTS);
 
@@ -271,9 +278,9 @@ export function DisplayActiveEvents(props) {
   const rows = data.activeEvents.map((obj) => ({
     ...obj,
     id: obj.id,
-    timestamp: obj.timestamp.toString(),
-    hash: obj.nft,
-    flexColumn: obj.creator,
+    timestamp: handleTimeStamp(obj.timestamp),
+    nftAddress: obj.nft,
+    creator: obj.creator,
     transcationType: "Recent Events",
     value: "",
     txHash: obj.txHash,
@@ -281,16 +288,17 @@ export function DisplayActiveEvents(props) {
     gasPrice: obj.gasPrice,
   }));
   return (
-    <>
-      <Title>{title}</Title>
-      {loading ? (
-        <div>is Loading</div>
-      ) : (
-        rows.map((row) => <RecentEventCard rows={rows} title={title} />)
-      )}
-    </>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Title>Recent Event </Title>
+      <Grid container spacing={4}>
+        {rows.map((row) => (
+          <ActionAreaCard key={row.id} row={row} />
+        ))}
+      </Grid>
+    </Container>
   );
 }
+//RecentEventCard
 
 // 1.1 My Events: (account = creator)=>(nft)
 export function DisplayCreatedEvents(userAddress) {
