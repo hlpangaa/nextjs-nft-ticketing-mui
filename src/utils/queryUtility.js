@@ -30,6 +30,7 @@ import {
   handleCurrencyFormat,
 } from "@/src/utils/stringUtility";
 import ActionAreaCard from "@/components/Cards/ActionAreaCard";
+import ActionAreaCardPreview from "@/components/Cards/ActionAreaCardPreview";
 
 /** Pages
  * 1. My Event
@@ -263,13 +264,8 @@ export function DisplayListedItems(sellerAddress) {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Title>Listed Items</Title>
       <Grid container spacing={4}>
-        {data.itemListeds.map(({ id, tokenId, nftAddress }) => (
-          <FeaturedPost
-            key={id}
-            date="01 Jan 2023"
-            title={tokenId}
-            description={nftAddress}
-          ></FeaturedPost>
+        {data.itemListeds.map(({ item }) => (
+          <FeaturedPost />
         ))}
       </Grid>
     </Container>
@@ -311,21 +307,19 @@ export function DisplayActiveEvents(props) {
 //RecentEventCard
 
 // 1.1 My Events: (account = creator)=>(nft)
-export function DisplayCreatedEvents(userAddress) {
-  const { loading, error, data } = useQuery(GET_CREATED_EVENTS);
+export function DisplayCreatedEvents(props) {
+  const { signerAddress, ...rest } = props;
+  const { loading, error, data } = useQuery(GET_CREATED_EVENTS, {
+    variables: { creator: signerAddress.toString() },
+  });
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={4}>
-        {data.activeEvents.map(({ id, tokenId, nftAddress }) => (
-          <FeaturedPost
-            key={id}
-            date="01 Jan 2023"
-            title={tokenId}
-            description={nftAddress}
-          ></FeaturedPost>
+        {data.contractCreateds.map((item) => (
+          <ActionAreaCardPreview key={item.id} item={item} />
         ))}
       </Grid>
     </Container>

@@ -132,8 +132,8 @@ export const GET_MINTED_ITEMS = gql`
 `;
 
 export const GET_CREATED_EVENTS = gql`
-  {
-    contractCreateds(first: 20) {
+  query getCreatedEvents($creator: String) {
+    contractCreateds(creator: $creator, first: 20) {
       id
       creator
       nft
