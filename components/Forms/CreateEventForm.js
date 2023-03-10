@@ -46,7 +46,8 @@ function getStepContent(step) {
 
 const theme = createTheme();
 
-export default function Checkout() {
+export default function Checkout(props) {
+  const { parentStateSetter, ...rest } = props;
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleNext = () => {

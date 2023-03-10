@@ -17,21 +17,22 @@ import { ethers, BigNumber } from "ethers";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 // import from project files
-import nftMarketplaceAbi from "../../constants/NftMarketplace.json";
-import nftFactoryAbi from "../../constants/EventFactory.json";
-import nftAbi from "../../constants/EventContract.json";
 import FlipCard, { BackCard, FrontCard } from "@/components/Cards/FlipCard";
 
 // project consts
-const marketplaceAddress = "0x0a5537a12d4EF5E274bF4b18bb79FD968CCF667C";
-const nftAddress = "0x8c9a29fd73ece36ff13fe490D4aEe4273750FE57";
-const nftFactoryAddress = "0xcabb9b44a429b56c7DF813F773767223D24910c0";
-const freeNftAddress = "0x1f2fbCc0dAB80847E8fcaC00d8Eacc571A4511E2";
+import networkMapping from "@/constants/networkMapping.json";
+import nftMarketplaceAbi from "../../constants/NftMarketplace.json";
+import eventFactoryAbi from "../../constants/EventFactory.json";
+import eventContractAbi from "../../constants/EventContract.json";
+const nftMarketplaceAddress = networkMapping["5"]["NftMarketplace"].toString();
+const eventFactoryAddress = networkMapping["5"]["EventFactory"].toString();
 
 const imageUri =
   "https://gateway.pinata.cloud/ipfs/QmQ3q5h3zkhkG6sXBs2PuKJ5E9tsbpPGcYkcJU5PYcUVCG";
 
-export function VendingMachine() {
+export function VendingMachine(props) {
+  const { nftAddress, ...rest } = props;
+
   //react hook
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -44,7 +45,7 @@ export function VendingMachine() {
   // 0. read mint price first
   const { data: mintFee } = useContractRead({
     address: nftAddress,
-    abi: nftAbi,
+    abi: eventContractAbi,
     functionName: "mintFee",
     watch: true,
     onError(error) {
@@ -55,7 +56,7 @@ export function VendingMachine() {
   // 1. call mint function to wrtie
   const { config } = usePrepareContractWrite({
     mode: "prepared",
-    address: marketplaceAddress,
+    address: nftMarketplaceAddress,
     abi: nftMarketplaceAbi,
     functionName: "mintFromMarketplace",
     args: [signerAddress, nftAddress],
@@ -89,7 +90,7 @@ export function VendingMachine() {
 
   const { data: totalSupplyData } = useContractRead({
     address: nftAddress,
-    abi: nftAbi,
+    abi: eventContractAbi,
     functionName: "supplyCap",
     watch: true,
     onError(error) {
@@ -116,7 +117,6 @@ export function VendingMachine() {
             <p style={{ margin: "12px 0 24px" }}>
               {totalMinted} minted so far!
             </p>
-            <ConnectButton />
 
             {mintError && (
               <p style={{ marginTop: 24, color: "#FF6257" }}>

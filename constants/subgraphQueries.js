@@ -37,6 +37,19 @@ export const GET_ACTIVE_EVENTS = gql`
     }
   }
 `;
+export const GET_MY_EVENTS = gql`
+  query getMyEvents($creator: String) {
+    activeEvents(creator: $creator, first: 20) {
+      id
+      creator
+      nft
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
+    }
+  }
+`;
 
 export const GET_OWNED_ITEMS = gql`
   query getBoughtItems($owner: String) {
@@ -55,7 +68,7 @@ export const GET_OWNED_ITEMS = gql`
 
 export const GET_BOUGHT_ITEMS = gql`
   query getBoughtItems($buyer: String) {
-    itemBoughts(buyer: $buyer, first: 10) {
+    itemBoughts(buyer: $buyer, first: 20) {
       id
       buyer
       nftAddress
@@ -117,7 +130,7 @@ export const GET_ROYALITIES_PAID = gql`
 `;
 export const GET_MINTED_ITEMS = gql`
   query getMintedItems($minter: String) {
-    itemMinteds(minter: $minter, first: 10) {
+    itemMinteds(minter: $minter, first: 20) {
       beneficiary
       id
       minter
@@ -132,8 +145,8 @@ export const GET_MINTED_ITEMS = gql`
 `;
 
 export const GET_CREATED_EVENTS = gql`
-  {
-    contractCreateds(first: 20) {
+  query getCreatedEvents($creator: String) {
+    contractCreateds(creator: $creator, first: 20) {
       id
       creator
       nft

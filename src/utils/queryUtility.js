@@ -16,6 +16,7 @@ import {
   GET_DISABLED_EVENTS,
   GET_OWNERSHIP_TRANSFERRED_ITEMS,
   GET_OWNED_ITEMS,
+  GET_MY_EVENTS,
 } from "@/constants/subgraphQueries";
 import Title from "@/components/Typography/Title";
 import TranscationTable from "@/components/Tables/TranscationTable";
@@ -30,6 +31,7 @@ import {
   handleCurrencyFormat,
 } from "@/src/utils/stringUtility";
 import ActionAreaCard from "@/components/Cards/ActionAreaCard";
+import ActionAreaCardPreview from "@/components/Cards/ActionAreaCardPreview";
 
 /** Pages
  * 1. My Event
@@ -263,13 +265,8 @@ export function DisplayListedItems(sellerAddress) {
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Title>Listed Items</Title>
       <Grid container spacing={4}>
-        {data.itemListeds.map(({ id, tokenId, nftAddress }) => (
-          <FeaturedPost
-            key={id}
-            date="01 Jan 2023"
-            title={tokenId}
-            description={nftAddress}
-          ></FeaturedPost>
+        {data.itemListeds.map(({ item }) => (
+          <FeaturedPost />
         ))}
       </Grid>
     </Container>
@@ -311,21 +308,24 @@ export function DisplayActiveEvents(props) {
 //RecentEventCard
 
 // 1.1 My Events: (account = creator)=>(nft)
-export function DisplayCreatedEvents(userAddress) {
-  const { loading, error, data } = useQuery(GET_CREATED_EVENTS);
+export function DisplayCreatedEvents(props) {
+  const { signerAddress, ...rest } = props;
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [events, setEvents] = useState(null);
+
+  const { loading, error, data } = useQuery(GET_MY_EVENTS, {
+    variables: { creator: signerAddress.toString() },
+  });
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
+  console.log("inbound data:");
+  console.log(data);
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={4}>
-        {data.activeEvents.map(({ id, tokenId, nftAddress }) => (
-          <FeaturedPost
-            key={id}
-            date="01 Jan 2023"
-            title={tokenId}
-            description={nftAddress}
-          ></FeaturedPost>
+        {data.activeEvents.map((item) => (
+          <ActionAreaCardPreview key={item.id} item={item} />
         ))}
       </Grid>
     </Container>
