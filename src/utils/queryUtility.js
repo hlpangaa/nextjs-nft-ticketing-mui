@@ -16,6 +16,7 @@ import {
   GET_DISABLED_EVENTS,
   GET_OWNERSHIP_TRANSFERRED_ITEMS,
   GET_OWNED_ITEMS,
+  GET_MY_EVENTS,
 } from "@/constants/subgraphQueries";
 import Title from "@/components/Typography/Title";
 import TranscationTable from "@/components/Tables/TranscationTable";
@@ -309,16 +310,21 @@ export function DisplayActiveEvents(props) {
 // 1.1 My Events: (account = creator)=>(nft)
 export function DisplayCreatedEvents(props) {
   const { signerAddress, ...rest } = props;
-  const { loading, error, data } = useQuery(GET_CREATED_EVENTS, {
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [events, setEvents] = useState(null);
+
+  const { loading, error, data } = useQuery(GET_MY_EVENTS, {
     variables: { creator: signerAddress.toString() },
   });
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
+  console.log("inbound data:");
+  console.log(data);
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={4}>
-        {data.contractCreateds.map((item) => (
+        {data.activeEvents.map((item) => (
           <ActionAreaCardPreview key={item.id} item={item} />
         ))}
       </Grid>

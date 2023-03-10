@@ -10,7 +10,7 @@ import { useContractRead } from "wagmi";
 import eventContractAbi from "../../constants/EventContract.json";
 
 export default function ActionAreaCard(props) {
-  const { item, signerAddress, onClick, ...other } = props;
+  const { nftAddress, signerAddress, onClick, ...other } = props;
   const [contractUri, setContractUri] = React.useState("");
   const [metaData, setMetaData] = React.useState({
     organizerName: "",
@@ -35,7 +35,7 @@ export default function ActionAreaCard(props) {
 
   // get URI from contract address
   const { data: symbol } = useContractRead({
-    address: item.nft,
+    address: nftAddress,
     abi: eventContractAbi,
     functionName: "symbol",
     watch: true,
@@ -45,7 +45,7 @@ export default function ActionAreaCard(props) {
   });
 
   const { data: readTxResult, error: readTxError } = useContractRead({
-    address: item.nft,
+    address: nftAddress,
     abi: eventContractAbi,
     functionName: "contractURI",
     watch: true,
@@ -123,46 +123,44 @@ export default function ActionAreaCard(props) {
   //   }
   // }, [mintFee]);
   return (
-    <Grid item>
-      <Card sx={{ maxWidth: 345 }}>
-        <CardActionArea>
-          <CardMedia component="img" height="300" image={metaData.fileUrl} />
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              {metaData.organizerName} - {metaData.eventName}
-            </Typography>
+    <Card sx={{ maxWidth: 345 }}>
+      <CardActionArea>
+        <CardMedia component="img" height="300" image={metaData.fileUrl} />
+        <CardContent>
+          <Typography gutterBottom variant="h5" component="div">
+            {metaData.organizerName} - {metaData.eventName}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {metaData.date} - {metaData.time}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {metaData.location}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            &nbsp;&nbsp;
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Description: {metaData.eventDescription}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {`Price ${metaData.price} ETH`}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Supply: {metaData.supplyLimit}
+          </Typography>
+          {contractUri ? (
             <Typography variant="body2" color="text.secondary">
-              {metaData.date} - {metaData.time}
+              contract
+              <Link href={`https://goerli.etherscan.io/address/${nftAddress}`}>
+                (view)
+              </Link>
+              URI<Link href={contractUri}> (view)</Link>
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {metaData.location}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              &nbsp;&nbsp;
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Description: {metaData.eventDescription}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {`Price ${metaData.price} ETH`}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Supply: {metaData.supplyLimit}
-            </Typography>
-            {contractUri ? (
-              <Typography variant="body2" color="text.secondary">
-                contract
-                <Link href={`https://goerli.etherscan.io/address/${item.nft}`}>
-                  (view)
-                </Link>
-                URI<Link href={contractUri}> (view)</Link>
-              </Typography>
-            ) : (
-              ""
-            )}
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    </Grid>
+          ) : (
+            ""
+          )}
+        </CardContent>
+      </CardActionArea>
+    </Card>
   );
 }

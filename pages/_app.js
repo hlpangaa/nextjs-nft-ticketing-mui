@@ -7,6 +7,9 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import theme from "../src/utils/theme";
 import createEmotionCache from "../src/utils/createEmotionCache";
+import Navigation from "@/components/Navigations/Navigation";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
 
 //rainbowkit packages
 import "@rainbow-me/rainbowkit/styles.css";
@@ -32,7 +35,7 @@ const { chains, provider } = configureChains(
 );
 //apollo graphQL const
 const apolloClient = new ApolloClient({
-  uri: "https://api.studio.thegraph.com/query/40468/nftticketing/1.1.2",
+  uri: "https://api.studio.thegraph.com/query/40468/nftticketing/1.3.0",
   cache: new InMemoryCache(),
 });
 
@@ -64,7 +67,11 @@ export default function MyApp(props) {
             <ThemeProvider theme={theme}>
               {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
               <CssBaseline />
-              <Component {...pageProps} />
+              <Box sx={{ display: "flex" }}>
+                <CssBaseline />
+                <Navigation />
+                <Component {...pageProps} />
+              </Box>
             </ThemeProvider>
           </CacheProvider>
         </RainbowKitProvider>
