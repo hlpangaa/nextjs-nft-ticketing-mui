@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 // See more example queries on https://thegraph.com/explorer/subgraph/protofire/maker-protocol
 // 0x0000000000000000000000000000000000000000 zero address
 // 0x000000000000000000000000000000000000dEaD dead address
+//https://thegraph.com/docs/en/querying/graphql-api/
 
 export const GET_ACTIVE_ITEMS = gql`
   {
@@ -39,7 +40,7 @@ export const GET_ACTIVE_EVENTS = gql`
 `;
 export const GET_MY_EVENTS = gql`
   query getMyEvents($creator: String) {
-    activeEvents(creator: $creator, first: 20) {
+    activeEvents(first: 20, where: { creator: $creator }) {
       id
       creator
       nft
@@ -53,7 +54,7 @@ export const GET_MY_EVENTS = gql`
 
 export const GET_OWNED_ITEMS = gql`
   query getBoughtItems($owner: String) {
-    itemOwneds(first: 20, owner: $seller) {
+    itemOwneds(first: 20, where: { owner: $owner }) {
       id
       owner
       nftAddress

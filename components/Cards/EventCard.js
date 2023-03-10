@@ -9,8 +9,8 @@ import Link from "@mui/material/Link";
 import { useContractRead } from "wagmi";
 import eventContractAbi from "../../constants/EventContract.json";
 
-export default function ActionAreaCard(props) {
-  const { nftAddress, signerAddress, onClick, ...other } = props;
+export default function EventCard(props) {
+  const { nftAddress, signerAddress, ...other } = props;
   const [contractUri, setContractUri] = React.useState("");
   const [metaData, setMetaData] = React.useState({
     organizerName: "",
@@ -25,7 +25,6 @@ export default function ActionAreaCard(props) {
     priceCelling: "",
     fileUrl: "",
   });
-  const [isSupportedToken, setIsSupportedToken] = React.useState(true);
 
   // //react hook
   const [mounted, setMounted] = React.useState(false);
@@ -94,7 +93,6 @@ export default function ActionAreaCard(props) {
       });
     } catch (error) {
       console.log(`error occur: ${error}`);
-      setIsSupportedToken(false);
     }
   }
 
@@ -111,17 +109,6 @@ export default function ActionAreaCard(props) {
     }
   }, [contractUri]);
 
-  const disable =
-    !isSupportedToken || // either not a supported token symbol
-    contractUri == "" || // cannot fetch contract uri
-    contractUri == null;
-  // metaData.eventName == ""; // cannot fetch contract metadata
-
-  // React.useEffect(() => {
-  //   if (mintFee) {
-  //     setField1(handleCurrencyFormat(mintFee, "ETH"));
-  //   }
-  // }, [mintFee]);
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
@@ -151,7 +138,7 @@ export default function ActionAreaCard(props) {
           {contractUri ? (
             <Typography variant="body2" color="text.secondary">
               contract
-              <Link href={`https://goerli.etherscan.io/address/${nftAddress}`}>
+              <Link href={`https://goerli.etherscan.io/token/${nftAddress}`}>
                 (view)
               </Link>
               URI<Link href={contractUri}> (view)</Link>

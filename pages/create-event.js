@@ -6,9 +6,9 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
+
 import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
+
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
@@ -485,7 +485,7 @@ function HomeContent() {
                       <Typography variant="body2" color="text.secondary">
                         Contract has been created in Goerli Network.
                         <Link
-                          href={`https://goerli.etherscan.io/address/${sendTxResult.hash}`}
+                          href={`https://goerli.etherscan.io/tx/${sendTxResult.hash}`}
                         >
                           (view Tx)
                         </Link>

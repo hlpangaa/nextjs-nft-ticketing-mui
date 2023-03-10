@@ -1,32 +1,20 @@
 import * as React from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import MuiDrawer from "@mui/material/Drawer";
+
 import Box from "@mui/material/Box";
-import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
+
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import {
-  mainListItems,
-  secondaryListItems,
-} from "@/components/Navigations/listItems";
-import Dashboard from "@/components/Delete/Dashboard";
-import Chart from "@/components/Charts/Chart";
-import Deposits from "@/components/Deposits";
-import Orders from "@/components/Tables/Orders";
-import Navigation from "@/components/Navigations/Navigation";
-import FeaturedPost from "@/components/Cards/FeaturedPost";
+
+import { useAccount } from "wagmi";
+import ClientOnly from "@/src/utils/clientOnly";
+import { GET_ACTIVE_ITEMS } from "@/constants/subgraphQueries";
+import { useQuery } from "@apollo/client";
+import TicketCard from "@/components/Cards/TicketCard";
 
 function Copyright(props) {
   return (
@@ -46,77 +34,53 @@ function Copyright(props) {
   );
 }
 
-const mdTheme = createTheme();
-const featuredPosts = [
-  {
-    title: "Featured post",
-    date: "Nov 12",
-    description:
-      "This is a wider card with supporting text below as a natural lead-in to additional content.",
-    image: "https://source.unsplash.com/random",
-    imageLabel: "Image Text",
-  },
-  {
-    title: "Post title",
-    date: "Nov 11",
-    description:
-      "This is a wider card with supporting text below as a natural lead-in to additional content.",
-    image: "https://source.unsplash.com/random",
-    imageLabel: "Image Text",
-  },
-  {
-    title: "Post title",
-    date: "Nov 11",
-    description:
-      "This is a wider card with supporting text below as a natural lead-in to additional content.",
-    image: "https://source.unsplash.com/random",
-    imageLabel: "Image Text",
-  },
-  {
-    title: "Post title",
-    date: "Nov 11",
-    description:
-      "This is a wider card with supporting text below as a natural lead-in to additional content.",
-    image: "https://source.unsplash.com/random",
-    imageLabel: "Image Text",
-  },
-];
-
+// My Ticket Page
 function HomeContent() {
-  const [open, setOpen] = React.useState(true);
-  const toggleDrawer = () => {
-    setOpen(!open);
-  };
+  const { isConnected, address: signerAddress } = useAccount();
+
+  const { loading, error, data } = useQuery(GET_ACTIVE_ITEMS);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+
+  console.log("inbound data:");
+  console.log(data);
 
   return (
-    <ThemeProvider theme={mdTheme}>
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <Navigation />
-        <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === "light"
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: "100vh",
-            overflow: "auto",
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={4}>
-              {featuredPosts.map((post) => (
-                <FeaturedPost key={post.title} post={post} />
-              ))}
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
-        </Box>
-      </Box>
-    </ThemeProvider>
+    <ClientOnly>
+      {!isConnected ? (
+        <div>Please connect to your wallet...</div>
+      ) : (
+        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <div>Index Page</div>
+          <Grid item xs={12} md={8} lg={9}>
+            <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+              <Container
+                className="ownedItemList"
+                maxWidth="lg"
+                sx={{ mt: 4, mb: 4 }}
+              >
+                {data.activeItems?.map((ticket) => (
+                  <Grid item>
+                    <Link
+                      href={`/event/${ticket.nftAddress}/token/${ticket.tokenId}`}
+                    >
+                      <TicketCard
+                        key={ticket.id}
+                        nftAddress={ticket.nftAddress}
+                        tokenId={ticket.tokenId}
+                      />
+                    </Link>
+                  </Grid>
+                ))}
+              </Container>
+            </Paper>
+          </Grid>
+
+          <Copyright sx={{ pt: 4 }} />
+        </Container>
+      )}
+    </ClientOnly>
   );
 }
 
