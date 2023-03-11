@@ -25,11 +25,25 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
 
-import { useContractRead } from "wagmi";
-import eventContractAbi from "../../constants/EventContract.json";
-import { ethers } from "ethers";
-import { connectorsForWallets } from "@rainbow-me/rainbowkit";
+// project consts
+import networkMapping from "@/constants/networkMapping.json";
+import nftMarketplaceAbi from "@/constants/NftMarketplace.json";
+import eventFactoryAbi from "@/constants/EventFactory.json";
+import eventContractAbi from "@/constants/EventContract.json";
+const nftMarketplaceAddress = networkMapping["5"]["NftMarketplace"].toString();
+const eventFactoryAddress = networkMapping["5"]["EventFactory"].toString();
+import { ethers, BigNumber } from "ethers";
+import {
+  useAccount,
+  usePrepareContractWrite,
+  useContractWrite,
+  useWaitForTransaction,
+  useContractRead,
+  useNetwork,
+  erc20ABI,
+} from "wagmi";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -66,6 +80,7 @@ export default function TicketCard(props) {
   const [open, setOpen] = React.useState(false);
   const [price, setPrice] = React.useState("0.1");
   const [transcationType, setTranscationType] = React.useState("");
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   const maxLength = 6;
   const trimedSellerAddress =
@@ -77,7 +92,7 @@ export default function TicketCard(props) {
     10000
   ).toFixed(4);
   const priceCellingInETH =
-    (Number(metaData.priceCelling) * listPriceinETH) / 100;
+    (Number(metaData.priceCelling) * metaData.price) / 100;
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -93,21 +108,33 @@ export default function TicketCard(props) {
   };
 
   const handlePriceChange = (event) => {
-    setPrice(event.target.value);
+    const value = event.target.value;
+    if (value <= 0) {
+      setErrorMessage("Price cannot be zero or negative");
+    } else if (value > priceCellingInETH) {
+      setErrorMessage("Price cannot be greater than price celling");
+    } else {
+      setErrorMessage("");
+    }
+    setPrice(value);
   };
 
   const handleBuy = () => {
-    // Do something with the sell price
+    buyTx?.();
     handleClose();
   };
 
   const handleUpdate = () => {
-    // Do something with the sell price
-    handleClose();
+    if (price <= 0 || price > priceCellingInETH) {
+      setOpen(true);
+    } else {
+      updateTx?.();
+      handleClose();
+    }
   };
 
   const handleDelist = () => {
-    // Do something with the sell price
+    delistTx?.();
     handleClose();
   };
 
@@ -117,17 +144,7 @@ export default function TicketCard(props) {
   // const [field, setField] = React.useState("");
   // const [field1, setField1] = React.useState("");
 
-  // get URI from contract address
-  const { data: symbol } = useContractRead({
-    address: nftAddress,
-    abi: eventContractAbi,
-    functionName: "symbol",
-    watch: true,
-    onError(error) {
-      console.log("Error", error);
-    },
-  });
-
+  // 0. get URI from contract address
   const { data: readTxResult } = useContractRead({
     address: nftAddress,
     abi: eventContractAbi,
@@ -149,6 +166,104 @@ export default function TicketCard(props) {
     onError(error) {
       console.log("Error", error);
     },
+  });
+
+  // 1. call update function to wrtie
+  const { config: updateTxConfig, error: prepareTxError } =
+    usePrepareContractWrite({
+      mode: "prepared",
+      address: nftMarketplaceAddress,
+      abi: nftMarketplaceAbi,
+      functionName: "updateListing",
+      args: [nftAddress, parseInt(tokenId), ethers.utils.parseEther(price)],
+      chainId: 5,
+      overrides: {
+        gasLimit: BigNumber.from(2100000),
+      },
+      onError(error) {
+        console.log("Error", error);
+      },
+    });
+
+  const {
+    data: updateTxResult,
+    write: updateTx,
+    isLoading: isUpdateTxLoading,
+    isSuccess: isUpdateTxStarted,
+    error: updateTxError,
+  } = useContractWrite(updateTxConfig);
+
+  const {
+    data: updateTxReceipt,
+    isSuccess: updateTxSuccess,
+    error: updateTxReceiptError,
+  } = useWaitForTransaction({
+    hash: updateTxResult?.hash,
+  });
+
+  // 2. call deList function to wrtie
+  const { config: delistTxConfig } = usePrepareContractWrite({
+    mode: "prepared",
+    address: nftMarketplaceAddress,
+    abi: nftMarketplaceAbi,
+    functionName: "cancelListing",
+    args: [nftAddress, parseInt(tokenId)],
+    chainId: 5,
+    overrides: {
+      gasLimit: BigNumber.from(2100000),
+    },
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+
+  const {
+    data: delistTxResult,
+    write: delistTx,
+    isLoading: isDelistTxLoading,
+    isSuccess: isDelistTxStarted,
+    error: delistTxError,
+  } = useContractWrite(delistTxConfig);
+
+  const {
+    data: delistTxReceipt,
+    isSuccess: delistTxSuccess,
+    error: delistTxReceiptError,
+  } = useWaitForTransaction({
+    hash: delistTxResult?.hash,
+  });
+
+  // 3. call buy function to wrtie
+  const { config: buyTxConfig } = usePrepareContractWrite({
+    mode: "prepared",
+    address: nftMarketplaceAddress,
+    abi: nftMarketplaceAbi,
+    functionName: "buyItem",
+    args: [nftAddress, parseInt(tokenId)],
+    chainId: 5,
+    overrides: {
+      value: listPrice,
+      gasLimit: BigNumber.from(2100000),
+    },
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+
+  const {
+    data: buyTxResult,
+    write: buyTx,
+    isLoading: isBuyTxLoading,
+    isSuccess: isBuyTxStarted,
+    error: buyTxError,
+  } = useContractWrite(buyTxConfig);
+
+  const {
+    data: buyTxReceipt,
+    isSuccess: buyTxSuccess,
+    error: buyTxReceiptError,
+  } = useWaitForTransaction({
+    hash: buyTxResult?.hash,
   });
 
   async function getMetaDataFromURI() {
@@ -188,11 +303,25 @@ export default function TicketCard(props) {
     }
   }
 
+  const isUpdated = updateTxSuccess;
+  const isDelisted = delistTxSuccess;
+  const isBought = buyTxSuccess;
+
+  let disabled =
+    !updateTx ||
+    isUpdateTxLoading ||
+    isUpdateTxStarted ||
+    !delistTx ||
+    isDelistTxLoading ||
+    isDelistTxStarted ||
+    !buyTx ||
+    isBuyTxLoading ||
+    isBuyTxStarted;
+
   React.useEffect(() => {
     if (tokenOwnerAddress && signerAddress) {
       const signerIsOwner = tokenOwnerAddress === signerAddress;
       setIsOwner(signerIsOwner);
-      console.log(`signer is Owner: ${signerIsOwner}`);
     }
   }, [tokenOwnerAddress, signerAddress]);
 
@@ -207,11 +336,6 @@ export default function TicketCard(props) {
       getMetaDataFromURI();
     }
   }, [contractUri]);
-
-  const disable =
-    !isSupportedToken || // either not a supported token symbol
-    contractUri == "" || // cannot fetch contract uri
-    contractUri == null;
 
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -286,7 +410,9 @@ export default function TicketCard(props) {
             <DialogTitle>Update Offer</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Please enter the price at which you want to sell this NFT:
+                Please enter the price at which you want to sell this NFT, price
+                cannot be zero. Please noted the artist setup the price Celling:{" "}
+                {priceCellingInETH}
               </DialogContentText>
               <TextField
                 autoFocus
@@ -297,12 +423,18 @@ export default function TicketCard(props) {
                 onChange={handlePriceChange}
                 fullWidth
                 defaultValue={listPriceinETH}
+                inputProps={{ max: priceCellingInETH, min: 0.00001 }}
               />
+              {errorMessage && (
+                <DialogContentText sx={{ color: "red" }}>
+                  {errorMessage}
+                </DialogContentText>
+              )}
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
               <Button
-                onClick={handleUpdate}
+                onClick={() => handleUpdate()}
                 variant="contained"
                 color="primary"
               >
@@ -324,7 +456,7 @@ export default function TicketCard(props) {
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
               <Button
-                onClick={handleDelist}
+                onClick={() => handleDelist()}
                 variant="contained"
                 color="primary"
               >
@@ -371,6 +503,57 @@ export default function TicketCard(props) {
           </Typography>
         </CardContent>
       </Collapse>
+      <CardContent>
+        {/* Transcation Message Box */}
+        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          {/* Transcation 1 - update*/}
+          <Typography variant="body2" color="text.secondary">
+            {isUpdateTxLoading && "Waiting for approval..."}
+            {isUpdateTxStarted && !isUpdated && "Update Listing in progress..."}
+          </Typography>
+          {isUpdated && (
+            <Typography variant="body2" color="text.secondary">
+              The listing has been updated in Goerli Network. You may refresh
+              your browser.
+              <Link
+                href={`https://goerli.etherscan.io/tx/${updateTxResult.hash}`}
+              >
+                (view Tx)
+              </Link>
+            </Typography>
+          )}
+          {/* Transcation 2 - delist */}
+          <Typography variant="body2" color="text.secondary">
+            {isDelistTxLoading && "Waiting for approval..."}
+            {isDelistTxStarted && !isDelisted && "delisting in progress..."}
+          </Typography>
+          {isDelisted && (
+            <Typography variant="body2" color="text.secondary">
+              The ticket has been delisted in Marketplace in Goerli Network. You
+              may refresh your browser.
+              <Link
+                href={`https://goerli.etherscan.io/tx/${delistTxResult.hash}`}
+              >
+                (view Tx)
+              </Link>
+            </Typography>
+          )}
+          {/* Transcation 3 - buy */}
+          <Typography variant="body2" color="text.secondary">
+            {isBuyTxLoading && "Waiting for approval..."}
+            {isBuyTxStarted && !isBought && "Buying ticket in progress..."}
+          </Typography>
+          {isBought && (
+            <Typography variant="body2" color="text.secondary">
+              The ticket has been bought in Marketplace in Goerli Network. You
+              may refresh your browser.
+              <Link href={`https://goerli.etherscan.io/tx/${buyTxResult.hash}`}>
+                (view Tx)
+              </Link>
+            </Typography>
+          )}
+        </Box>
+      </CardContent>
     </Card>
   );
 }

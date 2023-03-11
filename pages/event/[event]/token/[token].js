@@ -20,7 +20,6 @@ import Link from "@mui/material/Link";
 
 import ClientOnly from "@/src/utils/clientOnly";
 import { UriViewer } from "@/components/Tables/UriViewer";
-import Router from "next/router";
 
 // project consts
 import networkMapping from "@/constants/networkMapping.json";
