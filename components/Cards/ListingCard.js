@@ -67,6 +67,18 @@ export default function TicketCard(props) {
   const [price, setPrice] = React.useState("0.1");
   const [transcationType, setTranscationType] = React.useState("");
 
+  const maxLength = 6;
+  const trimedSellerAddress =
+    seller.length > maxLength ? seller.substring(0, maxLength) + "..." : seller;
+
+  const listPriceinETH = ethers.utils.formatEther(listPrice);
+  const royalityPaymentInETH = (
+    (listPriceinETH * metaData.royalityInBasepoint) /
+    10000
+  ).toFixed(4);
+  const priceCellingInETH =
+    (Number(metaData.priceCelling) * listPriceinETH) / 100;
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
@@ -94,14 +106,10 @@ export default function TicketCard(props) {
     handleClose();
   };
 
-  const handleSell = () => {
+  const handleDelist = () => {
     // Do something with the sell price
     handleClose();
   };
-
-  const maxLength = 6;
-  const trimedSellerAddress =
-    seller.length > maxLength ? seller.substring(0, maxLength) + "..." : seller;
 
   // //react hook
   const [mounted, setMounted] = React.useState(false);
@@ -226,7 +234,7 @@ export default function TicketCard(props) {
       />
       <CardContent>
         <Typography variant="h6" color="text.secondary">
-          {ethers.utils.formatEther(listPrice)} ETH
+          {listPriceinETH} ETH
         </Typography>
 
         {isOwner ? (
@@ -257,7 +265,7 @@ export default function TicketCard(props) {
             </IconButton>
             <IconButton
               aria-label="Cancel Offer"
-              onClick={() => handleClickOpen("Cancel")}
+              onClick={() => handleClickOpen("Delist")}
             >
               <CancelIcon />
             </IconButton>
@@ -272,6 +280,7 @@ export default function TicketCard(props) {
         >
           <ExpandMoreIcon />
         </ExpandMore>
+        {/* ---------------------------------------Handle Update---------- */}
         {transcationType === "Update" && (
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Update Offer</DialogTitle>
@@ -285,67 +294,60 @@ export default function TicketCard(props) {
                 id="price"
                 label="Price in ETH"
                 type="number"
-                value={price}
                 onChange={handlePriceChange}
                 fullWidth
+                defaultValue={listPriceinETH}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleSell} variant="contained" color="primary">
-                Sell
+              <Button
+                onClick={handleUpdate}
+                variant="contained"
+                color="primary"
+              >
+                Update
               </Button>
             </DialogActions>
           </Dialog>
         )}
-        {transcationType === "Cancel" && (
+        {/* ---------------------------------------Handle Delist---------- */}
+        {transcationType === "Delist" && (
           <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Cancel Offer</DialogTitle>
+            <DialogTitle>Delist Offer</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Please enter the price at which you want to sell this NFT:
+                You are going to delist your offer in Marketplace. Please
+                confirm:
               </DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="price"
-                label="Price in ETH"
-                type="number"
-                value={price}
-                onChange={handlePriceChange}
-                fullWidth
-              />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleSell} variant="contained" color="primary">
-                Sell
+              <Button
+                onClick={handleDelist}
+                variant="contained"
+                color="primary"
+              >
+                Confirm
               </Button>
             </DialogActions>
           </Dialog>
         )}
+        {/* ---------------------------------------Handle Buy---------- */}
         {transcationType === "Buy" && (
           <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Buy NFT</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Please enter the price at which you want to sell this NFT:
+                You are going to pay {listPriceinETH} ETH for the ticket. A
+                share of {royalityPaymentInETH} ETH will be rewarded to the
+                Artist.
               </DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="price"
-                label="Price in ETH"
-                type="number"
-                value={price}
-                onChange={handlePriceChange}
-                fullWidth
-              />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleSell} variant="contained" color="primary">
-                Sell
+              <Button onClick={handleBuy} variant="contained" color="primary">
+                Buy
               </Button>
             </DialogActions>
           </Dialog>
@@ -354,27 +356,21 @@ export default function TicketCard(props) {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
           <Typography variant="body2" color="text.secondary">
-            Supply Cap: {metaData.supplyLimit}
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
             Minted:{" "}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Royality Payment inclusively:{" "}
-            {(
-              (ethers.utils.formatEther(listPrice) *
-                metaData.royalityInBasepoint) /
-              10000
-            ).toFixed(4)}
+            Price Celling:{priceCellingInETH} ETH
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Royality to Artist included: {royalityPaymentInETH}
             ETH
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Ticket Detail:
+            <Link href={`/event/${nftAddress}/token/${tokenId}`}>(view)</Link>
           </Typography>
         </CardContent>
       </Collapse>
     </Card>
   );
 }
-
-// Buy
-// Cancel
-// Update
-// View Detail
