@@ -110,9 +110,14 @@ export default function EventCard(props) {
   }, [contractUri]);
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ minWidth: 320, maxWidth: 350, display: "flex" }}>
       <CardActionArea>
-        <CardMedia component="img" height="300" image={metaData.fileUrl} />
+        <CardMedia
+          component="img"
+          height="300"
+          image={metaData.fileUrl}
+          sx={{ display: { sm: "block" } }}
+        />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {metaData.organizerName} - {metaData.eventName}

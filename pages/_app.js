@@ -67,8 +67,7 @@ export default function MyApp(props) {
             <ThemeProvider theme={theme}>
               {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
               <CssBaseline />
-              <Box sx={{ display: "flex" }}>
-                <CssBaseline />
+              <Box sx={{ display: "flex", width: "100%" }}>
                 <Navigation />
                 <Component {...pageProps} />
               </Box>

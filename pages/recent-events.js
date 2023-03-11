@@ -15,6 +15,8 @@ import { GET_ACTIVE_EVENTS } from "@/constants/subgraphQueries";
 import { useQuery } from "@apollo/client";
 import EventCard from "@/components/Cards/EventCard";
 
+import Carousel from "react-material-ui-carousel";
+
 function Copyright(props) {
   return (
     <Typography
@@ -56,21 +58,55 @@ function HomeContent() {
           flexGrow: 1,
           height: "100vh",
           overflow: "auto",
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
         }}
       >
         <Toolbar />
 
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
           <Grid item xs={12} md={8} lg={9}>
-            <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+            <Paper
+              sx={{
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                minWidth: "400",
+              }}
+            >
+              {loading && (
+                <Box sx={{ width: "100%" }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Loading
+                  </Typography>
+                  <LinearProgress />
+                </Box>
+              )}
+
+              {error && (
+                <Typography variant="body2" color="text.secondary">
+                  Error : {error.message}
+                </Typography>
+              )}
               <Container
                 className="activeEventList"
                 maxWidth="lg"
                 sx={{ mt: 4, mb: 4 }}
               >
-                <Grid container spacing={4}>
-                  {data.activeEvents?.map((event) => (
-                    <Grid item>
+                <Grid
+                  container
+                  spacing={3}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                  }}
+                >
+                  {data?.activeEvents.map((event) => (
+                    // <Grid item xs={12} sm={6} md={4} lg={3}>
+                    <Grid item xs={12} sm={8} md={6} lg={4}>
                       <Link href={`/event/${event.nft}`}>
                         <EventCard key={event.id} nftAddress={event.nft} />
                       </Link>
@@ -80,7 +116,6 @@ function HomeContent() {
               </Container>
             </Paper>
           </Grid>
-
           <Copyright sx={{ pt: 4 }} />
         </Container>
       </Box>

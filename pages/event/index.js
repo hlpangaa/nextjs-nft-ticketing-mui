@@ -47,84 +47,93 @@ function HomeContent() {
 
   return (
     <ClientOnly>
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Grid item xs={12} md={8} lg={9}>
-          <Box
-            component="main"
-            sx={{
-              backgroundColor: (theme) =>
-                theme.palette.mode === "light"
-                  ? theme.palette.grey[100]
-                  : theme.palette.grey[900],
-              flexGrow: 1,
-              height: "100vh",
-              overflow: "auto",
-            }}
-          >
-            <Toolbar />
-            {!isConnected ? (
-              <Typography variant="body2" color="text.secondary">
-                Please connect to your wallet...
-              </Typography>
-            ) : (
-              <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-                <Grid item xs={12} md={8} lg={9}>
-                  <Paper
-                    sx={{ p: 2, display: "flex", flexDirection: "column" }}
-                  >
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === "light"
+              ? theme.palette.grey[100]
+              : theme.palette.grey[900],
+          flexGrow: 1,
+          height: "100vh",
+          overflow: "auto",
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+        }}
+      >
+        <Toolbar />
+        {!isConnected ? (
+          <Typography variant="body2" color="text.secondary">
+            Please connect to your wallet...
+          </Typography>
+        ) : (
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Grid item xs={12} md={8} lg={9}>
+              <Paper
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: "400",
+                }}
+              >
+                <Typography variant="body2" color="text.secondary">
+                  Signing in as {signerAddress}
+                </Typography>
+
+                {loading && (
+                  <Box sx={{ width: "100%" }}>
                     <Typography variant="body2" color="text.secondary">
-                      Signing in as {signerAddress}
+                      Loading
                     </Typography>
+                    <LinearProgress />
+                  </Box>
+                )}
 
-                    {loading && (
-                      <Box sx={{ width: "100%" }}>
-                        <Typography variant="body2" color="text.secondary">
-                          Loading
-                        </Typography>
-                        <LinearProgress />
-                      </Box>
-                    )}
-
-                    {error && (
-                      <Typography variant="body2" color="text.secondary">
-                        Error : {error.message}
-                      </Typography>
-                    )}
-                    {(!data ||
-                      !data.activeEvents ||
-                      data.activeEvents.length === 0) &&
-                      !loading && (
-                        <Typography variant="body2" color="text.secondary">
-                          You don't have event.
-                        </Typography>
-                      )}
-                    <Container
-                      className="activeEventList"
-                      maxWidth="lg"
-                      sx={{ mt: 4, mb: 4 }}
-                    >
-                      <Grid container spacing={4}>
-                        {data?.activeEvents.map((event) => (
-                          <Grid item>
-                            <Link href={`/event/${event.nft}`}>
-                              <EventCard
-                                key={event.id}
-                                nftAddress={event.nft}
-                              />
-                            </Link>
-                          </Grid>
-                        ))}
+                {error && (
+                  <Typography variant="body2" color="text.secondary">
+                    Error : {error.message}
+                  </Typography>
+                )}
+                {(!data ||
+                  !data.activeEvents ||
+                  data.activeEvents.length === 0) &&
+                  !loading && (
+                    <Typography variant="body2" color="text.secondary">
+                      You don't have event.
+                    </Typography>
+                  )}
+                <Container
+                  className="activeEventList"
+                  maxWidth="lg"
+                  sx={{ mt: 4, mb: 4 }}
+                >
+                  <Grid
+                    container
+                    spacing={3}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {data?.activeEvents.map((event) => (
+                      // <Grid item xs={12} sm={6} md={4} lg={3}>
+                      <Grid item xs={12} sm={8} md={6} lg={4}>
+                        <Link href={`/event/${event.nft}`}>
+                          <EventCard key={event.id} nftAddress={event.nft} />
+                        </Link>
                       </Grid>
-                    </Container>
-                  </Paper>
-                </Grid>
-
-                <Copyright sx={{ pt: 4 }} />
-              </Container>
-            )}
-          </Box>
-        </Grid>
-      </Container>
+                    ))}
+                  </Grid>
+                </Container>
+              </Paper>
+            </Grid>
+            <Copyright sx={{ pt: 4 }} />
+          </Container>
+        )}
+      </Box>
     </ClientOnly>
   );
 }
