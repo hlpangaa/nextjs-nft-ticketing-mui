@@ -29,6 +29,7 @@ import Button from "@mui/material/Button";
 import { useContractRead } from "wagmi";
 import eventContractAbi from "../../constants/EventContract.json";
 import { ethers } from "ethers";
+import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -64,12 +65,14 @@ export default function TicketCard(props) {
   const [isOwner, setIsOwner] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [price, setPrice] = React.useState("0.1");
+  const [transcationType, setTranscationType] = React.useState("");
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
   };
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (transcationType) => {
+    setTranscationType(transcationType);
     setOpen(true);
   };
 
@@ -79,6 +82,16 @@ export default function TicketCard(props) {
 
   const handlePriceChange = (event) => {
     setPrice(event.target.value);
+  };
+
+  const handleBuy = () => {
+    // Do something with the sell price
+    handleClose();
+  };
+
+  const handleUpdate = () => {
+    // Do something with the sell price
+    handleClose();
   };
 
   const handleSell = () => {
@@ -107,10 +120,23 @@ export default function TicketCard(props) {
     },
   });
 
-  const { data: readTxResult, error: readTxError } = useContractRead({
+  const { data: readTxResult } = useContractRead({
     address: nftAddress,
     abi: eventContractAbi,
     functionName: "contractURI",
+    watch: true,
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+
+  // 0. read ownerOf
+  const { data: tokenOwnerAddress, error: readTxError } = useContractRead({
+    address: nftAddress,
+    abi: eventContractAbi,
+    functionName: "ownerOf",
+    args: [parseInt(tokenId)],
+    chainId: 5,
     watch: true,
     onError(error) {
       console.log("Error", error);
@@ -127,8 +153,8 @@ export default function TicketCard(props) {
       const res = await fetch(requestURL);
       const json = await res.json();
 
-      console.log("fetched Meta data:");
-      console.log(json);
+      // console.log("fetched Meta data:");
+      // console.log(json);
 
       const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
       const fileUriUpdated = fileUriRaw.replace(
@@ -155,6 +181,14 @@ export default function TicketCard(props) {
   }
 
   React.useEffect(() => {
+    if (tokenOwnerAddress && signerAddress) {
+      const signerIsOwner = tokenOwnerAddress === signerAddress;
+      setIsOwner(signerIsOwner);
+      console.log(`signer is Owner: ${signerIsOwner}`);
+    }
+  }, [tokenOwnerAddress, signerAddress]);
+
+  React.useEffect(() => {
     if (readTxResult !== null) {
       setContractUri(readTxResult);
     }
@@ -173,12 +207,7 @@ export default function TicketCard(props) {
 
   return (
     <Card sx={{ maxWidth: 345 }}>
-      <CardMedia
-        component="img"
-        height="194"
-        image={metaData.fileUrl}
-        alt="Paella dish"
-      />
+      <CardMedia component="img" height="194" image={metaData.fileUrl} />
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -190,29 +219,51 @@ export default function TicketCard(props) {
             <MoreVertIcon />
           </IconButton>
         }
-        title={metaData.organizerName}
-        subheader={metaData.eventName}
-        // subheader={`${metaData.date} ${metaData.time}`}
+        title={`${metaData.organizerName} | ${metaData.eventName} `}
+        // title={metaData.organizerName}
+        // subheader={metaData.eventName}
+        subheader={`${metaData.date} - ${metaData.time}`}
       />
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {`${metaData.date} - ${metaData.time}`}
+        <Typography variant="h6" color="text.secondary">
+          {ethers.utils.formatEther(listPrice)} ETH
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {ethers.utils.formatEther(listPrice)} ETH offered by{" "}
-          <Link href={seller}>{trimedSellerAddress}</Link>
-        </Typography>
+
+        {isOwner ? (
+          <Typography variant="body2" color="text.secondary">
+            Owned by you
+          </Typography>
+        ) : (
+          <Typography variant="body2" color="text.secondary">
+            offered by <Link href={seller}>{trimedSellerAddress}</Link>
+          </Typography>
+        )}
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="Take Offer" onClick={handleClickOpen}>
-          <ShoppingCartIcon />
-        </IconButton>
-        <IconButton aria-label="Edit Offer" onClick={handleClickOpen}>
-          <EditIcon />
-        </IconButton>
-        <IconButton aria-label="Cancel Offer" onClick={handleClickOpen}>
-          <CancelIcon />
-        </IconButton>
+        {!isOwner ? (
+          <IconButton
+            aria-label="Take Offer"
+            onClick={() => handleClickOpen("Buy")}
+          >
+            <ShoppingCartIcon />
+          </IconButton>
+        ) : (
+          <div>
+            <IconButton
+              aria-label="Edit Offer"
+              onClick={() => handleClickOpen("Update")}
+            >
+              <EditIcon />
+            </IconButton>
+            <IconButton
+              aria-label="Cancel Offer"
+              onClick={() => handleClickOpen("Cancel")}
+            >
+              <CancelIcon />
+            </IconButton>
+          </div>
+        )}
+
         <ExpandMore
           expand={expanded}
           onClick={handleExpandClick}
@@ -221,36 +272,102 @@ export default function TicketCard(props) {
         >
           <ExpandMoreIcon />
         </ExpandMore>
-        <Dialog open={open} onClose={handleClose}>
-          <DialogTitle>Sell NFT</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Please enter the price at which you want to sell this NFT:
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="price"
-              label="Price in ETH"
-              type="number"
-              value={price}
-              onChange={handlePriceChange}
-              fullWidth
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleSell} variant="contained" color="primary">
-              Sell
-            </Button>
-          </DialogActions>
-        </Dialog>
+        {transcationType === "Update" && (
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Update Offer</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please enter the price at which you want to sell this NFT:
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="price"
+                label="Price in ETH"
+                type="number"
+                value={price}
+                onChange={handlePriceChange}
+                fullWidth
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleSell} variant="contained" color="primary">
+                Sell
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
+        {transcationType === "Cancel" && (
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Cancel Offer</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please enter the price at which you want to sell this NFT:
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="price"
+                label="Price in ETH"
+                type="number"
+                value={price}
+                onChange={handlePriceChange}
+                fullWidth
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleSell} variant="contained" color="primary">
+                Sell
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
+        {transcationType === "Buy" && (
+          <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Buy NFT</DialogTitle>
+            <DialogContent>
+              <DialogContentText>
+                Please enter the price at which you want to sell this NFT:
+              </DialogContentText>
+              <TextField
+                autoFocus
+                margin="dense"
+                id="price"
+                label="Price in ETH"
+                type="number"
+                value={price}
+                onChange={handlePriceChange}
+                fullWidth
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>Cancel</Button>
+              <Button onClick={handleSell} variant="contained" color="primary">
+                Sell
+              </Button>
+            </DialogActions>
+          </Dialog>
+        )}
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
-          <Typography paragraph>Supply Cap:</Typography>
-          <Typography paragraph>Minted: </Typography>
-          <Typography paragraph>Royality Payment Required:</Typography>
+          <Typography variant="body2" color="text.secondary">
+            Supply Cap: {metaData.supplyLimit}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Minted:{" "}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Royality Payment inclusively:{" "}
+            {(
+              (ethers.utils.formatEther(listPrice) *
+                metaData.royalityInBasepoint) /
+              10000
+            ).toFixed(4)}
+            ETH
+          </Typography>
         </CardContent>
       </Collapse>
     </Card>

@@ -39,8 +39,8 @@ function SellTicket() {
 
   const { loading, error, data } = useQuery(GET_ACTIVE_ITEMS);
 
-  console.log("inbound active items:");
-  console.log(data);
+  // console.log("inbound active items:");
+  // console.log(data);
 
   return (
     <ClientOnly>
@@ -130,6 +130,7 @@ function SellTicket() {
                           tokenId={listing.tokenId}
                           listPrice={listing.price}
                           seller={listing.seller}
+                          signerAddress={signerAddress}
                         />
                         {/* </Link> */}
                       </Grid>
