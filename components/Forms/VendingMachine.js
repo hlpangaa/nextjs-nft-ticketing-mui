@@ -111,41 +111,6 @@ export function VendingMachine(props) {
   return (
     <div className="page">
       <div className="container">
-        <div style={{ flex: "1 1 auto" }}>
-          <div style={{ padding: "24px 24px 24px 0" }}>
-            <h1>NFT Demo Mint</h1>
-            <p style={{ margin: "12px 0 24px" }}>
-              {totalMinted} minted so far!
-            </p>
-
-            {mintError && (
-              <p style={{ marginTop: 24, color: "#FF6257" }}>
-                Error: {mintError.message}
-              </p>
-            )}
-            {txError && (
-              <p style={{ marginTop: 24, color: "#FF6257" }}>
-                Error: {txError.message}
-              </p>
-            )}
-
-            {mounted && isConnected && !isMinted && (
-              <button
-                style={{ marginTop: 24 }}
-                disabled={!mint || isMintLoading || isMintStarted}
-                className="button"
-                data-mint-loading={isMintLoading}
-                data-mint-started={isMintStarted}
-                onClick={() => mint?.()}
-              >
-                {isMintLoading && "Waiting for approval"}
-                {isMintStarted && "Minting..."}
-                {!isMintLoading && !isMintStarted && "Mint"}
-              </button>
-            )}
-          </div>
-        </div>
-
         <div style={{ flex: "0 0 auto" }}>
           <FlipCard>
             <FrontCard isCardFlipped={isMinted}>

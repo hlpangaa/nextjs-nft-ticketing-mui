@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { VendingMachine } from "@/components/Forms/VendingMachine";
+import { Minter } from "@/components/Forms/Minter";
 import EventCard from "@/components/Cards/EventCard";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
@@ -47,10 +48,7 @@ export default function EventDetail() {
                 >
                   <Grid container spacing={4}>
                     <Grid item>
-                      <VendingMachine nftAddress={event} />
-                    </Grid>
-                    <Grid item>
-                      <EventCard nftAddress={event} />
+                      <Minter nftAddress={event} />
                     </Grid>
                   </Grid>
                 </Container>
