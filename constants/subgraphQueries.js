@@ -11,6 +11,54 @@ export const GET_ACTIVE_ITEMS = gql`
       first: 20
       where: {
         buyer: "0x0000000000000000000000000000000000000000"
+        # nftAddress: $nftAddress
+        # tokenId: $tokenId
+      }
+    ) {
+      id
+      buyer
+      seller
+      nftAddress
+      tokenId
+      price
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
+    }
+  }
+`;
+
+export const GET_ACTIVE_ITEMS_BY_ADD = gql`
+  query getActiveItems($creator: String, $nftAddress: String, $tokenId: Int) {
+    activeItems(
+      first: 20
+      where: {
+        buyer: "0x0000000000000000000000000000000000000000"
+        nftAddress: $nftAddress
+        # tokenId: $tokenId
+      }
+    ) {
+      id
+      buyer
+      seller
+      nftAddress
+      tokenId
+      price
+      txHash
+      blockNumber
+      timestamp
+      gasPrice
+    }
+  }
+`;
+
+export const GET_ACTIVE_ITEMS_BY_ADD_AND_TOKEN = gql`
+  query getActiveItems($creator: String, $nftAddress: String, $tokenId: Int) {
+    activeItems(
+      first: 20
+      where: {
+        buyer: "0x0000000000000000000000000000000000000000"
         nftAddress: $nftAddress
         tokenId: $tokenId
       }

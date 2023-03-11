@@ -43,9 +43,6 @@ export const UriViewer = (props) => {
       const res = await fetch(requestURL);
       const json = await res.json();
       setJson(json);
-
-      console.log("JSON Response");
-      console.log(json);
     } catch (error) {
       console.log(`error occur: ${error}`);
     }

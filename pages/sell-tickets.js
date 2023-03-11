@@ -6,15 +6,15 @@ import Typography from "@mui/material/Typography";
 
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
-
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
+import LinearProgress from "@mui/material/LinearProgress";
 
 import { useAccount } from "wagmi";
 import ClientOnly from "@/src/utils/clientOnly";
 import { GET_ACTIVE_ITEMS } from "@/constants/subgraphQueries";
 import { useQuery } from "@apollo/client";
-import TicketCard from "@/components/Cards/TicketCard";
+import EventCard from "@/components/Cards/EventCard";
 
 function Copyright(props) {
   return (
@@ -34,56 +34,108 @@ function Copyright(props) {
   );
 }
 
-// My Ticket Page
-function HomeContent() {
+// My Event Page
+function SellTicket() {
   const { isConnected, address: signerAddress } = useAccount();
 
   const { loading, error, data } = useQuery(GET_ACTIVE_ITEMS);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
-
-  console.log("inbound data:");
+  console.log("inbound events:");
   console.log(data);
 
   return (
     <ClientOnly>
-      {!isConnected ? (
-        <div>Please connect to your wallet...</div>
-      ) : (
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <div>Index Page</div>
-          <Grid item xs={12} md={8} lg={9}>
-            <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-              <Container
-                className="ownedItemList"
-                maxWidth="lg"
-                sx={{ mt: 4, mb: 4 }}
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === "light"
+              ? theme.palette.grey[100]
+              : theme.palette.grey[900],
+          flexGrow: 1,
+          height: "100vh",
+          overflow: "auto",
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+        }}
+      >
+        <Toolbar />
+        {!isConnected ? (
+          <Typography variant="body2" color="text.secondary">
+            Please connect to your wallet...
+          </Typography>
+        ) : (
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Grid item xs={12} md={8} lg={9}>
+              <Paper
+                sx={{
+                  p: 2,
+                  display: "flex",
+                  flexDirection: "column",
+                  minWidth: "400",
+                }}
               >
-                {data.activeItems?.map((ticket) => (
-                  <Grid item>
-                    <Link
-                      href={`/event/${ticket.nftAddress}/token/${ticket.tokenId}`}
-                    >
-                      <TicketCard
-                        key={ticket.id}
-                        nftAddress={ticket.nftAddress}
-                        tokenId={ticket.tokenId}
-                      />
-                    </Link>
-                  </Grid>
-                ))}
-              </Container>
-            </Paper>
-          </Grid>
+                <Typography variant="body2" color="text.secondary">
+                  Signing in as {signerAddress}
+                </Typography>
 
-          <Copyright sx={{ pt: 4 }} />
-        </Container>
-      )}
+                {loading && (
+                  <Box sx={{ width: "100%" }}>
+                    <Typography variant="body2" color="text.secondary">
+                      Loading
+                    </Typography>
+                    <LinearProgress />
+                  </Box>
+                )}
+
+                {error && (
+                  <Typography variant="body2" color="text.secondary">
+                    Error : {error.message}
+                  </Typography>
+                )}
+                {(!data ||
+                  !data.activeItems ||
+                  data.activeItems.length === 0) &&
+                  !loading && (
+                    <Typography variant="body2" color="text.secondary">
+                      Marketplace has no listing.
+                    </Typography>
+                  )}
+                <Container
+                  className="activeItemsList"
+                  maxWidth="lg"
+                  sx={{ mt: 4, mb: 4 }}
+                >
+                  <Grid
+                    container
+                    spacing={3}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {data?.activeItems.map((event) => (
+                      // <Grid item xs={12} sm={6} md={4} lg={3}>
+                      <Grid item xs={12} sm={8} md={6} lg={4}>
+                        <Link href={`/event/${event.nft}`}>
+                          <EventCard key={event.id} nftAddress={event.nft} />
+                        </Link>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Container>
+              </Paper>
+            </Grid>
+            <Copyright sx={{ pt: 4 }} />
+          </Container>
+        )}
+      </Box>
     </ClientOnly>
   );
 }
 
 export default function Home() {
-  return <HomeContent />;
+  return <SellTicket />;
 }

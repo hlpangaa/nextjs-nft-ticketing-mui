@@ -71,8 +71,6 @@ export default function EventCard(props) {
       const res = await fetch(requestURL);
       const json = await res.json();
 
-      console.log("JSON Response");
-      console.log(json);
       const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
       const fileUriUpdated = fileUriRaw.replace(
         "ipfs://",
@@ -149,7 +147,7 @@ export default function EventCard(props) {
               URI<Link href={contractUri}> (view)</Link>
             </Typography>
           ) : (
-            ""
+            <></>
           )}
         </CardContent>
       </CardActionArea>
