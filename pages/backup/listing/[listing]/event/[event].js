@@ -12,9 +12,12 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import { useAccount } from "wagmi";
 import ClientOnly from "@/src/utils/clientOnly";
-import { GET_OWNED_ITEMS } from "@/constants/subgraphQueries";
+import { GET_ACTIVE_ITEMS_BY_ADD } from "@/constants/subgraphQueries";
 import { useQuery } from "@apollo/client";
 import TicketCard from "@/components/Cards/TicketCard";
+
+//listing/all/event/[event]  - show a active items of a event
+import { useRouter } from "next/router";
 
 function Copyright(props) {
   return (
@@ -35,11 +38,19 @@ function Copyright(props) {
 }
 
 // My Ticket Page
-function TicketList() {
+function HomeContent() {
+  const router = useRouter();
   const { isConnected, address: signerAddress } = useAccount();
+  const { event } = router.query;
+  if (typeof event == "string") {
+    const isValidAddressLength = event.length == 42;
+    if (!isValidAddressLength) {
+      router.push("/sell-tickets");
+    }
+  }
 
-  const { loading, error, data } = useQuery(GET_OWNED_ITEMS, {
-    variables: { owner: signerAddress },
+  const { loading, error, data } = useQuery(GET_ACTIVE_ITEMS_BY_ADD, {
+    variables: { nftAddress: event },
   });
 
   console.log("inbound ticket:");
@@ -75,6 +86,9 @@ function TicketList() {
                     <Typography variant="body2" color="text.secondary">
                       Signing in as {signerAddress}
                     </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      You are viewing active items of event {event}
+                    </Typography>
 
                     {loading && (
                       <Box sx={{ width: "100%" }}>
@@ -91,8 +105,8 @@ function TicketList() {
                       </Typography>
                     )}
                     {(!data ||
-                      !data.itemOwneds ||
-                      data.itemOwneds.length === 0) &&
+                      !data.activeItems ||
+                      data.activeItems.length === 0) &&
                       !loading && (
                         <Typography variant="body2" color="text.secondary">
                           You don't have ticket.
@@ -103,7 +117,7 @@ function TicketList() {
                       maxWidth="lg"
                       sx={{ mt: 4, mb: 4 }}
                     >
-                      {data?.itemOwneds.map((ticket) => (
+                      {data?.activeItems.map((ticket) => (
                         <Grid item>
                           <Link
                             href={`/event/${ticket.nftAddress}/token/${ticket.tokenId}`}
@@ -131,5 +145,5 @@ function TicketList() {
 }
 
 export default function Home() {
-  return <TicketList />;
+  return <HomeContent />;
 }

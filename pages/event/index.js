@@ -35,7 +35,7 @@ function Copyright(props) {
 }
 
 // My Event Page
-function HomeContent() {
+function EventList() {
   const { isConnected, address: signerAddress } = useAccount();
 
   const { loading, error, data } = useQuery(GET_MY_EVENTS, {
@@ -139,5 +139,5 @@ function HomeContent() {
 }
 
 export default function Home() {
-  return <HomeContent />;
+  return <EventList />;
 }

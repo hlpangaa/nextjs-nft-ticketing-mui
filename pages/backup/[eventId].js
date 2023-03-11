@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useContractRead } from "wagmi";
 import eventContractAbi from "../../constants/EventContract.json";
 
-function EventDetail() {
+function ListingByEvent() {
   const router = useRouter();
   const [event, setEvent] = useState(null);
   const { eventId } = router.query;
@@ -52,4 +52,4 @@ function EventDetail() {
   );
 }
 
-export default EventDetail;
+export default ListingByEvent;

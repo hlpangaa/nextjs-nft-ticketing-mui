@@ -44,7 +44,7 @@ import {
   erc20ABI,
 } from "wagmi";
 
-const TicketDetailPage = () => {
+const ListingDetail = () => {
   const router = useRouter();
   const { event, token } = router.query;
   const { isConnected, address: signerAddress } = useAccount();
@@ -249,7 +249,7 @@ const TicketDetailPage = () => {
             <Grid item xs={12} md={8} lg={9}>
               <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
                 <Typography variant="body2" color="text.secondary">
-                  Viewing event detail of token {token} in {event}
+                  Viewing listing detail of token {token} in {event}
                 </Typography>
 
                 {!isOwner && (
@@ -398,4 +398,4 @@ const TicketDetailPage = () => {
   );
 };
 
-export default TicketDetailPage;
+export default ListingDetail;

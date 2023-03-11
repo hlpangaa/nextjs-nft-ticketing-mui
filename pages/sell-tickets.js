@@ -14,7 +14,7 @@ import { useAccount } from "wagmi";
 import ClientOnly from "@/src/utils/clientOnly";
 import { GET_ACTIVE_ITEMS } from "@/constants/subgraphQueries";
 import { useQuery } from "@apollo/client";
-import EventCard from "@/components/Cards/EventCard";
+import ListingCard from "@/components/Cards/ListingCard";
 
 function Copyright(props) {
   return (
@@ -34,13 +34,12 @@ function Copyright(props) {
   );
 }
 
-// My Event Page
 function SellTicket() {
   const { isConnected, address: signerAddress } = useAccount();
 
   const { loading, error, data } = useQuery(GET_ACTIVE_ITEMS);
 
-  console.log("inbound events:");
+  console.log("inbound active items:");
   console.log(data);
 
   return (
@@ -79,6 +78,9 @@ function SellTicket() {
                 <Typography variant="body2" color="text.secondary">
                   Signing in as {signerAddress}
                 </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Viewing all listed Items in NFT Marketplace
+                </Typography>
 
                 {loading && (
                   <Box sx={{ width: "100%" }}>
@@ -116,12 +118,20 @@ function SellTicket() {
                       flexWrap: "wrap",
                     }}
                   >
-                    {data?.activeItems.map((event) => (
+                    {data?.activeItems.map((listing) => (
                       // <Grid item xs={12} sm={6} md={4} lg={3}>
                       <Grid item xs={12} sm={8} md={6} lg={4}>
-                        <Link href={`/event/${event.nft}`}>
-                          <EventCard key={event.id} nftAddress={event.nft} />
-                        </Link>
+                        {/* <Link
+                          href={`/event/${listing.nftAddress}/token/${listing.tokenId}/listing`}
+                        > */}
+                        <ListingCard
+                          key={listing.id}
+                          nftAddress={listing.nftAddress}
+                          tokenId={listing.tokenId}
+                          listPrice={listing.price}
+                          seller={listing.seller}
+                        />
+                        {/* </Link> */}
                       </Grid>
                     ))}
                   </Grid>
