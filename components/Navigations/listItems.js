@@ -36,17 +36,11 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="My Tickets" />
     </ListItemButton>
-    <ListItemButton href="/mint-tickets">
+    <ListItemButton href="/sell-tickets">
       <ListItemIcon>
         <LayersIcon />
       </ListItemIcon>
-      <ListItemText primary="Mint Ticket" />
-    </ListItemButton>
-    <ListItemButton href="/sell-tickets">
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Sell Tickets" />
+      <ListItemText primary="Ticket Swap" />
     </ListItemButton>
     <ListItemButton href="/recent-events">
       <ListItemIcon>
@@ -66,19 +60,19 @@ export const secondaryListItems = (
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <ListItemText primary="Current month" />
+      <ListItemText primary="Transcation History" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <ListItemText primary="Last quarter" />
+      <ListItemText primary="Payment Histroy" />
     </ListItemButton>
     <ListItemButton>
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
-      <ListItemText primary="Year-end sale" />
+      <ListItemText primary="Marketplace Satistic" />
     </ListItemButton>
   </React.Fragment>
 );

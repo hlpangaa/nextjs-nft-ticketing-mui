@@ -6,14 +6,15 @@ import Typography from "@mui/material/Typography";
 
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
 
 import { useAccount } from "wagmi";
 import ClientOnly from "@/src/utils/clientOnly";
-import { GET_ACTIVE_EVENTS } from "@/constants/subgraphQueries";
+import { GET_OWNED_ITEMS } from "@/constants/subgraphQueries";
 import { useQuery } from "@apollo/client";
-import EventCard from "@/components/Cards/EventCard";
+import TicketCard from "@/components/Cards/TicketCard";
 
 function Copyright(props) {
   return (
@@ -33,57 +34,54 @@ function Copyright(props) {
   );
 }
 
-// My Event Page
+// My Ticket Page
 function HomeContent() {
   const { isConnected, address: signerAddress } = useAccount();
 
-  const { loading, error, data } = useQuery(GET_ACTIVE_EVENTS);
+  const { loading, error, data } = useQuery(GET_OWNED_ITEMS, {
+    variables: { owner: signerAddress },
+  });
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
-  console.log("inbound events:");
+  console.log("inbound data:");
   console.log(data);
 
   return (
     <ClientOnly>
-      <Box
-        component="main"
-        sx={{
-          backgroundColor: (theme) =>
-            theme.palette.mode === "light"
-              ? theme.palette.grey[100]
-              : theme.palette.grey[900],
-          flexGrow: 1,
-          height: "100vh",
-          overflow: "auto",
-        }}
-      >
-        <Toolbar />
-
+      {!isConnected ? (
+        <div>Please connect to your wallet...</div>
+      ) : (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <div>Index Page</div>
           <Grid item xs={12} md={8} lg={9}>
             <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
               <Container
-                className="activeEventList"
+                className="ownedItemList"
                 maxWidth="lg"
                 sx={{ mt: 4, mb: 4 }}
               >
-                <Grid container spacing={4}>
-                  {data.activeEvents?.map((event) => (
-                    <Grid item>
-                      <Link href={`/event/${event.nft}`}>
-                        <EventCard key={event.id} nftAddress={event.nft} />
-                      </Link>
-                    </Grid>
-                  ))}
-                </Grid>
+                {data.itemOwneds?.map((ticket) => (
+                  <Grid item>
+                    <Link
+                      href={`/event/${ticket.nftAddress}/token/${ticket.tokenId}`}
+                    >
+                      <TicketCard
+                        key={ticket.id}
+                        nftAddress={ticket.nftAddress}
+                        tokenId={ticket.tokenId}
+                      />
+                    </Link>
+                  </Grid>
+                ))}
               </Container>
             </Paper>
           </Grid>
 
           <Copyright sx={{ pt: 4 }} />
         </Container>
-      </Box>
+      )}
     </ClientOnly>
   );
 }
