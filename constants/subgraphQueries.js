@@ -6,10 +6,14 @@ import { gql } from "@apollo/client";
 //https://thegraph.com/docs/en/querying/graphql-api/
 
 export const GET_ACTIVE_ITEMS = gql`
-  {
+  query getActiveItems($creator: String, $nftAddress: String, $tokenId: Int) {
     activeItems(
       first: 20
-      where: { buyer: "0x0000000000000000000000000000000000000000" }
+      where: {
+        buyer: "0x0000000000000000000000000000000000000000"
+        nftAddress: $nftAddress
+        tokenId: $tokenId
+      }
     ) {
       id
       buyer
@@ -53,7 +57,7 @@ export const GET_MY_EVENTS = gql`
 `;
 
 export const GET_OWNED_ITEMS = gql`
-  query getBoughtItems($owner: String) {
+  query getOwnedItems($owner: String) {
     itemOwneds(first: 20, where: { owner: $owner }) {
       id
       owner

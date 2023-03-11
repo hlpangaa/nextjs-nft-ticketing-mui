@@ -1,38 +1,14 @@
 import * as React from "react";
-import { createTheme } from "@mui/material/styles";
-
 import Box from "@mui/material/Box";
-
-import Toolbar from "@mui/material/Toolbar";
-
 import Typography from "@mui/material/Typography";
-
-import IconButton from "@mui/material/IconButton";
-
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
-
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
-import DeleteIcon from "@mui/icons-material/Delete";
-import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import EventCard from "@/components/Cards/EventCard";
-
-import eventFactorytAbi from "@/constants/EventFactory.json";
-
 import Image from "next/image";
-
 import { ethers, BigNumber } from "ethers";
-
-// rainbowkit package
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 // import from project files
 import FlipCard, { BackCard, FrontCard } from "@/components/Cards/FlipCard";
@@ -116,10 +92,20 @@ export function Minter(props) {
 
   // 2. call read function
 
-  const { data: totalSupplyData } = useContractRead({
+  const { data: supplyCap } = useContractRead({
     address: nftAddress,
     abi: eventContractAbi,
     functionName: "supplyCap",
+    watch: true,
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+
+  const { data: nextToken } = useContractRead({
+    address: nftAddress,
+    abi: eventContractAbi,
+    functionName: "_getNextTokenId",
     watch: true,
     onError(error) {
       console.log("Error", error);
@@ -131,21 +117,22 @@ export function Minter(props) {
   let disabled = !sendTx || isTxLoading || isTxStarted;
 
   React.useEffect(() => {
-    if (totalSupplyData) {
-      setTotalMinted(totalSupplyData.toNumber());
+    if (supplyCap && nextToken) {
+      const totalSupply = supplyCap - nextToken + 1;
+      setTotalMinted(totalSupply);
     }
-  }, [totalSupplyData]);
+  }, [supplyCap, nextToken]);
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       <Grid container spacing={3}>
         {/* CreateEventForm */}
-        <Grid item xs={8}>
+        <Grid item xs={5.5}>
           <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
             <Typography variant="h6" gutterBottom>
               Mint your ticket
             </Typography>
             <Typography variant="body2" gutterBottom>
-              {totalMinted} minted so far!
+              {totalMinted} tickets remain...
             </Typography>
             {sendTxError && (
               <p style={{ marginTop: 24, color: "#FF6257" }}>
@@ -233,8 +220,6 @@ export function Minter(props) {
                       sx={{ mt: 3, ml: 1 }}
                       disabled={!sendTx || isTxLoading || isTxStarted}
                       className="button"
-                      data-sendTx-loading={isTxLoading}
-                      data-sendTx-started={isTxStarted}
                       onClick={() => sendTx?.()}
                     >
                       Mint
@@ -245,7 +230,7 @@ export function Minter(props) {
             </Grid>
           </Paper>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item>
           <EventCard nftAddress={nftAddress} />
         </Grid>
       </Grid>

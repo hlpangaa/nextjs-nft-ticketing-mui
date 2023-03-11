@@ -11,11 +11,18 @@ import Toolbar from "@mui/material/Toolbar";
 
 import ClientOnly from "@/src/utils/clientOnly";
 import { useAccount } from "wagmi";
+import Router from "next/router";
 
 export default function EventDetail() {
   const router = useRouter();
   const { event } = router.query;
   const { isConnected, address: signerAddress } = useAccount();
+  if (typeof event == "string") {
+    const isValidAddressLength = event.length == 42;
+    if (!isValidAddressLength) {
+      Router.push("/recent-events");
+    }
+  }
 
   return (
     <ClientOnly>

@@ -15,7 +15,7 @@ export const mainListItems = (
     <ListSubheader component="div" inset>
       Event Organizer
     </ListSubheader>
-    <ListItemButton href="/my-events">
+    <ListItemButton href="/event">
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
@@ -30,7 +30,7 @@ export const mainListItems = (
     <ListSubheader component="div" inset>
       Event Attendee
     </ListSubheader>
-    <ListItemButton href="/my-tickets">
+    <ListItemButton href="/event/displayAll/token">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
