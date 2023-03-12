@@ -72,8 +72,15 @@ function TicketList() {
                   <Paper
                     sx={{ p: 2, display: "flex", flexDirection: "column" }}
                   >
+                    <Typography variant="h6" color="inherit">
+                      My Tickets Page
+                    </Typography>
                     <Typography variant="body2" color="text.secondary">
                       Signing in as {signerAddress}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Viewing all tickets owned by signerAddress. Regardless
+                      it's from Minting or purchasing.
                     </Typography>
 
                     {loading && (

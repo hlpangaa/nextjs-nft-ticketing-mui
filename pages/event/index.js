@@ -78,8 +78,14 @@ function EventList() {
                   minWidth: "400",
                 }}
               >
+                <Typography variant="h6" color="inherit">
+                  My Events Page
+                </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Signing in as {signerAddress}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Viewing all active events owned by signerAddress.
                 </Typography>
 
                 {loading && (

@@ -10,7 +10,7 @@ import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
 import Collapse from "@mui/material/Collapse";
 import Avatar from "@mui/material/Avatar";
-import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { red } from "@mui/material/colors";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -57,8 +57,15 @@ const ExpandMore = styled((props) => {
 }));
 
 export default function TicketCard(props) {
-  const { nftAddress, tokenId, listPrice, seller, signerAddress, ...other } =
-    props;
+  const {
+    id,
+    nftAddress,
+    tokenId,
+    listPrice,
+    seller,
+    signerAddress,
+    ...other
+  } = props;
   const [contractUri, setContractUri] = React.useState("");
   const [metaData, setMetaData] = React.useState({
     organizerName: "",
@@ -78,7 +85,7 @@ export default function TicketCard(props) {
   const [expanded, setExpanded] = React.useState(false);
   const [isOwner, setIsOwner] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [price, setPrice] = React.useState("0.1");
+  const [price, setPrice] = React.useState("0");
   const [transcationType, setTranscationType] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState("");
 
@@ -338,222 +345,231 @@ export default function TicketCard(props) {
   }, [contractUri]);
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
-      <CardMedia component="img" height="194" image={metaData.fileUrl} />
-      <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
-            #{tokenId}
-          </Avatar>
-        }
-        action={
-          <IconButton aria-label="settings">
-            <MoreVertIcon />
-          </IconButton>
-        }
-        title={`${metaData.organizerName} | ${metaData.eventName} `}
-        // title={metaData.organizerName}
-        // subheader={metaData.eventName}
-        subheader={`${metaData.date} - ${metaData.time}`}
-      />
-      <CardContent>
-        <Typography variant="h6" color="text.secondary">
-          {listPriceinETH} ETH
-        </Typography>
-
-        {isOwner ? (
-          <Typography variant="body2" color="text.secondary">
-            Owned by you
-          </Typography>
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            offered by <Link href={seller}>{trimedSellerAddress}</Link>
-          </Typography>
-        )}
-      </CardContent>
-      <CardActions disableSpacing>
-        {!isOwner ? (
-          <IconButton
-            aria-label="Take Offer"
-            onClick={() => handleClickOpen("Buy")}
-          >
-            <ShoppingCartIcon />
-          </IconButton>
-        ) : (
-          <div>
-            <IconButton
-              aria-label="Edit Offer"
-              onClick={() => handleClickOpen("Update")}
-            >
-              <EditIcon />
+    <Grid item key={id}>
+      <Card sx={{ maxWidth: 300 }}>
+        <CardMedia component="img" height="194" image={metaData.fileUrl} />
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
+              #{tokenId}
+            </Avatar>
+          }
+          action={
+            <IconButton aria-label="settings">
+              <MoreVertIcon />
             </IconButton>
-            <IconButton
-              aria-label="Cancel Offer"
-              onClick={() => handleClickOpen("Delist")}
-            >
-              <CancelIcon />
-            </IconButton>
-          </div>
-        )}
-
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <ExpandMoreIcon />
-        </ExpandMore>
-        {/* ---------------------------------------Handle Update---------- */}
-        {transcationType === "Update" && (
-          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Update Offer</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Please enter the price at which you want to sell this NFT, price
-                cannot be zero. Please noted the artist setup the price Celling:{" "}
-                {priceCellingInETH}
-              </DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="price"
-                label="Price in ETH"
-                type="number"
-                onChange={handlePriceChange}
-                fullWidth
-                defaultValue={listPriceinETH}
-                inputProps={{ max: priceCellingInETH, min: 0.00001 }}
-              />
-              {errorMessage && (
-                <DialogContentText sx={{ color: "red" }}>
-                  {errorMessage}
-                </DialogContentText>
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button
-                onClick={() => handleUpdate()}
-                variant="contained"
-                color="primary"
-              >
-                Update
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )}
-        {/* ---------------------------------------Handle Delist---------- */}
-        {transcationType === "Delist" && (
-          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Delist Offer</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                You are going to delist your offer in Marketplace. Please
-                confirm:
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button
-                onClick={() => handleDelist()}
-                variant="contained"
-                color="primary"
-              >
-                Confirm
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )}
-        {/* ---------------------------------------Handle Buy---------- */}
-        {transcationType === "Buy" && (
-          <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Buy NFT</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                You are going to pay {listPriceinETH} ETH for the ticket. A
-                share of {royalityPaymentInETH} ETH will be rewarded to the
-                Artist.
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button onClick={handleBuy} variant="contained" color="primary">
-                Buy
-              </Button>
-            </DialogActions>
-          </Dialog>
-        )}
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
+          }
+          title={`${metaData.organizerName} | ${metaData.eventName} `}
+          // title={metaData.organizerName}
+          // subheader={metaData.eventName}
+          subheader={`${metaData.date} - ${metaData.time}`}
+        />
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            Minted:{" "}
+          <Typography variant="h6" color="text.secondary">
+            {listPriceinETH} ETH
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Price Celling:{priceCellingInETH} ETH
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Royality to Artist included: {royalityPaymentInETH}
-            ETH
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Ticket Detail:
-            <Link href={`/event/${nftAddress}/token/${tokenId}`}>(view)</Link>
-          </Typography>
+
+          {isOwner ? (
+            <Typography variant="body2" color="text.secondary">
+              Owned by you
+            </Typography>
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              offered by <Link href={seller}>{trimedSellerAddress}</Link>
+            </Typography>
+          )}
         </CardContent>
-      </Collapse>
-      <CardContent>
-        {/* Transcation Message Box */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-          {/* Transcation 1 - update*/}
-          <Typography variant="body2" color="text.secondary">
-            {isUpdateTxLoading && "Waiting for approval..."}
-            {isUpdateTxStarted && !isUpdated && "Update Listing in progress..."}
-          </Typography>
-          {isUpdated && (
-            <Typography variant="body2" color="text.secondary">
-              The listing has been updated in Goerli Network. You may refresh
-              your browser.
-              <Link
-                href={`https://goerli.etherscan.io/tx/${updateTxResult.hash}`}
+        <CardActions disableSpacing>
+          {!isOwner ? (
+            <IconButton
+              aria-label="Take Offer"
+              onClick={() => handleClickOpen("Buy")}
+              disabled={disabled}
+            >
+              <ShoppingCartIcon />
+            </IconButton>
+          ) : (
+            <div>
+              <IconButton
+                aria-label="Edit Offer"
+                onClick={() => handleClickOpen("Update")}
+                disabled={disabled}
               >
-                (view Tx)
-              </Link>
-            </Typography>
-          )}
-          {/* Transcation 2 - delist */}
-          <Typography variant="body2" color="text.secondary">
-            {isDelistTxLoading && "Waiting for approval..."}
-            {isDelistTxStarted && !isDelisted && "delisting in progress..."}
-          </Typography>
-          {isDelisted && (
-            <Typography variant="body2" color="text.secondary">
-              The ticket has been delisted in Marketplace in Goerli Network. You
-              may refresh your browser.
-              <Link
-                href={`https://goerli.etherscan.io/tx/${delistTxResult.hash}`}
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                aria-label="Cancel Offer"
+                onClick={() => handleClickOpen("Delist")}
+                disabled={disabled}
               >
-                (view Tx)
-              </Link>
-            </Typography>
+                <CancelIcon />
+              </IconButton>
+            </div>
           )}
-          {/* Transcation 3 - buy */}
-          <Typography variant="body2" color="text.secondary">
-            {isBuyTxLoading && "Waiting for approval..."}
-            {isBuyTxStarted && !isBought && "Buying ticket in progress..."}
-          </Typography>
-          {isBought && (
+
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </ExpandMore>
+          {/* ---------------------------------------Handle Update---------- */}
+          {transcationType === "Update" && (
+            <Dialog open={open} onClose={handleClose}>
+              <DialogTitle>Update Offer</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Please enter the price at which you want to sell this NFT,
+                  price cannot be zero. Please noted the artist setup the price
+                  Celling: {priceCellingInETH}
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="price"
+                  label="Price in ETH"
+                  type="number"
+                  onChange={handlePriceChange}
+                  fullWidth
+                  defaultValue={listPriceinETH}
+                  inputProps={{ max: priceCellingInETH, min: 0.00001 }}
+                />
+                {errorMessage && (
+                  <DialogContentText sx={{ color: "red" }}>
+                    {errorMessage}
+                  </DialogContentText>
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button
+                  onClick={() => handleUpdate()}
+                  variant="contained"
+                  color="primary"
+                >
+                  Update
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
+          {/* ---------------------------------------Handle Delist---------- */}
+          {transcationType === "Delist" && (
+            <Dialog open={open} onClose={handleClose}>
+              <DialogTitle>Delist Offer</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  You are going to delist your offer in Marketplace. Please
+                  confirm:
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button
+                  onClick={() => handleDelist()}
+                  variant="contained"
+                  color="primary"
+                >
+                  Confirm
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
+          {/* ---------------------------------------Handle Buy---------- */}
+          {transcationType === "Buy" && (
+            <Dialog open={open} onClose={handleClose}>
+              <DialogTitle>Buy NFT</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  You are going to pay {listPriceinETH} ETH for the ticket. A
+                  share of {royalityPaymentInETH} ETH will be rewarded to the
+                  Artist.
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={handleBuy} variant="contained" color="primary">
+                  Buy
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
             <Typography variant="body2" color="text.secondary">
-              The ticket has been bought in Marketplace in Goerli Network. You
-              may refresh your browser.
-              <Link href={`https://goerli.etherscan.io/tx/${buyTxResult.hash}`}>
-                (view Tx)
-              </Link>
+              Minted:{" "}
             </Typography>
-          )}
-        </Box>
-      </CardContent>
-    </Card>
+            <Typography variant="body2" color="text.secondary">
+              Price Celling:{priceCellingInETH} ETH
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Royality to Artist included: {royalityPaymentInETH}
+              ETH
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Ticket Detail:
+              <Link href={`/event/${nftAddress}/token/${tokenId}`}>(view)</Link>
+            </Typography>
+          </CardContent>
+        </Collapse>
+        <CardContent>
+          {/* Transcation Message Box */}
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            {/* Transcation 1 - update*/}
+            <Typography variant="body2" color="text.secondary">
+              {isUpdateTxLoading && "Waiting for approval..."}
+              {isUpdateTxStarted &&
+                !isUpdated &&
+                "Update Listing in progress..."}
+            </Typography>
+            {isUpdated && (
+              <Typography variant="body2" color="text.secondary">
+                The listing has been updated in Goerli Network. You may refresh
+                your browser.
+                <Link
+                  href={`https://goerli.etherscan.io/tx/${updateTxResult.hash}`}
+                >
+                  (view Tx)
+                </Link>
+              </Typography>
+            )}
+            {/* Transcation 2 - delist */}
+            <Typography variant="body2" color="text.secondary">
+              {isDelistTxLoading && "Waiting for approval..."}
+              {isDelistTxStarted && !isDelisted && "delisting in progress..."}
+            </Typography>
+            {isDelisted && (
+              <Typography variant="body2" color="text.secondary">
+                The ticket has been delisted in Marketplace in Goerli Network.
+                You may refresh your browser.
+                <Link
+                  href={`https://goerli.etherscan.io/tx/${delistTxResult.hash}`}
+                >
+                  (view Tx)
+                </Link>
+              </Typography>
+            )}
+            {/* Transcation 3 - buy */}
+            <Typography variant="body2" color="text.secondary">
+              {isBuyTxLoading && "Waiting for approval..."}
+              {isBuyTxStarted && !isBought && "Buying ticket in progress..."}
+            </Typography>
+            {isBought && (
+              <Typography variant="body2" color="text.secondary">
+                The ticket has been bought in Marketplace in Goerli Network. You
+                may refresh your browser.
+                <Link
+                  href={`https://goerli.etherscan.io/tx/${buyTxResult.hash}`}
+                >
+                  (view Tx)
+                </Link>
+              </Typography>
+            )}
+          </Box>
+        </CardContent>
+      </Card>
+    </Grid>
   );
 }

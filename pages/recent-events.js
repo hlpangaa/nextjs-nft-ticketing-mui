@@ -66,6 +66,12 @@ function HomeContent() {
         <Toolbar />
 
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            Recent Event Page
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Public page listing all active events in the market palce.
+          </Typography>
           <Grid item xs={12} md={8} lg={9}>
             <Paper
               sx={{

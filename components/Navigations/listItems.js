@@ -56,19 +56,19 @@ export const secondaryListItems = (
     <ListSubheader component="div" inset>
       Saved reports
     </ListSubheader>
-    <ListItemButton>
+    <ListItemButton href="/transcation-history">
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Transcation History" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton href="/payment-history">
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Payment Histroy" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton href="/marketplace-statistic">
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
