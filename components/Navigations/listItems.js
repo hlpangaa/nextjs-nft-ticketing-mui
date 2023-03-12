@@ -15,7 +15,7 @@ export const mainListItems = (
     <ListSubheader component="div" inset>
       Event Organizer
     </ListSubheader>
-    <ListItemButton href="/my-events">
+    <ListItemButton href="/event">
       <ListItemIcon>
         <DashboardIcon />
       </ListItemIcon>
@@ -30,7 +30,7 @@ export const mainListItems = (
     <ListSubheader component="div" inset>
       Event Attendee
     </ListSubheader>
-    <ListItemButton href="/my-tickets">
+    <ListItemButton href="/event/displayAll/token">
       <ListItemIcon>
         <PeopleIcon />
       </ListItemIcon>
@@ -56,19 +56,19 @@ export const secondaryListItems = (
     <ListSubheader component="div" inset>
       Saved reports
     </ListSubheader>
-    <ListItemButton>
+    <ListItemButton href="/transcation-history">
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Transcation History" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton href="/payment-history">
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>
       <ListItemText primary="Payment Histroy" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton href="/marketplace-statistic">
       <ListItemIcon>
         <AssignmentIcon />
       </ListItemIcon>

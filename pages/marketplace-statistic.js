@@ -12,9 +12,9 @@ import LinearProgress from "@mui/material/LinearProgress";
 
 import { useAccount } from "wagmi";
 import ClientOnly from "@/src/utils/clientOnly";
-import { GET_ACTIVE_ITEMS } from "@/constants/subgraphQueries";
+import { GET_MY_EVENTS } from "@/constants/subgraphQueries";
 import { useQuery } from "@apollo/client";
-import ListingCard from "@/components/Cards/ListingCard";
+import EventCard from "@/components/Cards/EventCard";
 
 function Copyright(props) {
   return (
@@ -34,13 +34,16 @@ function Copyright(props) {
   );
 }
 
-function SellTicket() {
+// My Event Page
+function EventList() {
   const { isConnected, address: signerAddress } = useAccount();
 
-  const { loading, error, data } = useQuery(GET_ACTIVE_ITEMS);
+  const { loading, error, data } = useQuery(GET_MY_EVENTS, {
+    variables: { creator: signerAddress },
+  });
 
-  // console.log("inbound active items:");
-  // console.log(data);
+  console.log("inbound events:");
+  console.log(data);
 
   return (
     <ClientOnly>
@@ -66,6 +69,10 @@ function SellTicket() {
           </Typography>
         ) : (
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Typography variant="h6" color="inherit">
+              Market Statistic - to be prioritized - need to rework the indexing
+              approach
+            </Typography>
             <Grid item xs={12} md={8} lg={9}>
               <Paper
                 sx={{
@@ -73,23 +80,10 @@ function SellTicket() {
                   display: "flex",
                   flexDirection: "column",
                   minWidth: "400",
-                  width: "75vw",
                 }}
               >
-                <Typography variant="h6" gutterBottom>
-                  Ticket Marketplace
-                </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Signing in as {signerAddress}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Viewing all listed Items in NFT Marketplace
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Seller is allowed to update and delist the offer listing.
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Buyer is allowed to buy ticket only.
                 </Typography>
 
                 {loading && (
@@ -107,15 +101,15 @@ function SellTicket() {
                   </Typography>
                 )}
                 {(!data ||
-                  !data.activeItems ||
-                  data.activeItems.length === 0) &&
+                  !data.activeEvents ||
+                  data.activeEvents.length === 0) &&
                   !loading && (
                     <Typography variant="body2" color="text.secondary">
-                      Marketplace has no listing.
+                      You don't have event.
                     </Typography>
                   )}
                 <Container
-                  className="activeItemsList"
+                  className="activeEventList"
                   maxWidth="lg"
                   sx={{ mt: 4, mb: 4 }}
                 >
@@ -128,17 +122,12 @@ function SellTicket() {
                       flexWrap: "wrap",
                     }}
                   >
-                    {data?.activeItems.map((listing) => (
+                    {data?.activeEvents.map((event) => (
                       // <Grid item xs={12} sm={6} md={4} lg={3}>
                       <Grid item xs={12} sm={8} md={6} lg={4}>
-                        <ListingCard
-                          id={listing.id}
-                          nftAddress={listing.nftAddress}
-                          tokenId={listing.tokenId}
-                          listPrice={listing.price}
-                          seller={listing.seller}
-                          signerAddress={signerAddress}
-                        />
+                        <Link href={`/event/${event.nft}`}>
+                          <EventCard key={event.id} nftAddress={event.nft} />
+                        </Link>
                       </Grid>
                     ))}
                   </Grid>
@@ -154,5 +143,5 @@ function SellTicket() {
 }
 
 export default function Home() {
-  return <SellTicket />;
+  return <EventList />;
 }

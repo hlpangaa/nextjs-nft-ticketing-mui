@@ -71,8 +71,6 @@ export default function EventCard(props) {
       const res = await fetch(requestURL);
       const json = await res.json();
 
-      console.log("JSON Response");
-      console.log(json);
       const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
       const fileUriUpdated = fileUriRaw.replace(
         "ipfs://",
@@ -110,9 +108,14 @@ export default function EventCard(props) {
   }, [contractUri]);
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ minWidth: 320, maxWidth: 350, display: "flex" }}>
       <CardActionArea>
-        <CardMedia component="img" height="300" image={metaData.fileUrl} />
+        <CardMedia
+          component="img"
+          height="300"
+          image={metaData.fileUrl}
+          sx={{ display: { sm: "block" } }}
+        />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {metaData.organizerName} - {metaData.eventName}
@@ -144,7 +147,7 @@ export default function EventCard(props) {
               URI<Link href={contractUri}> (view)</Link>
             </Typography>
           ) : (
-            ""
+            <></>
           )}
         </CardContent>
       </CardActionArea>

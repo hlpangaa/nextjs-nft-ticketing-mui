@@ -259,7 +259,7 @@ function HomeContent() {
           <Grid item xs={8}>
             <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
               <Typography variant="h6" gutterBottom>
-                Create a Event Contract
+                Create Event Page
               </Typography>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={6}>
@@ -434,7 +434,7 @@ function HomeContent() {
                     disabled
                     id="outlined-disabled"
                     label="Event Poster"
-                    defaultValue="Only Support png"
+                    defaultValue="Please upload image"
                   />
                   <IconButton
                     color="primary"

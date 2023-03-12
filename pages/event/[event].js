@@ -11,11 +11,18 @@ import Toolbar from "@mui/material/Toolbar";
 
 import ClientOnly from "@/src/utils/clientOnly";
 import { useAccount } from "wagmi";
+import Router from "next/router";
 
 export default function EventDetail() {
   const router = useRouter();
   const { event } = router.query;
   const { isConnected, address: signerAddress } = useAccount();
+  if (typeof event == "string") {
+    const isValidAddressLength = event.length == 42;
+    if (!isValidAddressLength) {
+      Router.push("/recent-events");
+    }
+  }
 
   return (
     <ClientOnly>
@@ -38,6 +45,9 @@ export default function EventDetail() {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid item xs={12} md={8} lg={9}>
               <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                <Typography variant="h6" color="inherit">
+                  Event Detail Page
+                </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Viewing event detail of {event}
                 </Typography>

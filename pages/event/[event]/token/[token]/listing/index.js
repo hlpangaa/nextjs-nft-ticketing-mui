@@ -20,6 +20,7 @@ import Link from "@mui/material/Link";
 
 import ClientOnly from "@/src/utils/clientOnly";
 import { UriViewer } from "@/components/Tables/UriViewer";
+import Router from "next/router";
 
 // project consts
 import networkMapping from "@/constants/networkMapping.json";
@@ -28,6 +29,9 @@ import eventFactoryAbi from "@/constants/EventFactory.json";
 import eventContractAbi from "@/constants/EventContract.json";
 const nftMarketplaceAddress = networkMapping["5"]["NftMarketplace"].toString();
 const eventFactoryAddress = networkMapping["5"]["EventFactory"].toString();
+
+const imageUri =
+  "https://gateway.pinata.cloud/ipfs/QmQ3q5h3zkhkG6sXBs2PuKJ5E9tsbpPGcYkcJU5PYcUVCG";
 
 import { ethers, BigNumber } from "ethers";
 import {
@@ -40,7 +44,7 @@ import {
   erc20ABI,
 } from "wagmi";
 
-const TicketDetailPage = () => {
+const ListingDetail = () => {
   const router = useRouter();
   const { event, token } = router.query;
   const { isConnected, address: signerAddress } = useAccount();
@@ -51,11 +55,7 @@ const TicketDetailPage = () => {
   const [isOwner, setIsOwner] = React.useState(false);
   const [isAlreadyListed, setIsAlreadyListed] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [price, setPrice] = React.useState("0");
-  const [errorMessage, setErrorMessage] = React.useState("");
-  const [mintFeeInETH, setMintFeeInETH] = React.useState(0);
-  const [priceCellingInETH, setPriceCellingInETH] = React.useState(0);
-
+  const [price, setPrice] = React.useState("0.1");
   if (typeof event == "string") {
     const isValidAddressLength = event.length == 42;
     if (!isValidAddressLength) {
@@ -79,53 +79,20 @@ const TicketDetailPage = () => {
   };
 
   const handlePriceChange = (event) => {
-    const value = event.target.value;
-    if (value <= 0) {
-      setErrorMessage("Price cannot be zero or negative");
-    } else if (value > priceCellingInETH) {
-      setErrorMessage("Price cannot be greater than price celling");
-    } else {
-      setErrorMessage("");
-      setPrice(value);
-    }
+    setPrice(event.target.value);
   };
 
-  const handleApprove = () => {
+  const handleSell = () => {
+    // Do something with the sell price
     approveTx?.();
     handleClose();
   };
-
-  const handleList = () => {
-    if (price <= 0 || price > priceCellingInETH) {
-      setOpen(true);
-    } else {
-      listTx?.();
-      handleClose();
-    }
-  };
-  console.log(`price`);
-  console.log(price);
-  console.log(`priceCellingInETH`);
-  console.log(priceCellingInETH);
 
   // 0. read ownerOf
   const { data: tokenOwnerAddress, error: readTxError } = useContractRead({
     address: nftAddress,
     abi: eventContractAbi,
     functionName: "ownerOf",
-    args: [parseInt(tokenId)],
-    chainId: 5,
-    watch: true,
-    onError(error) {
-      console.log("Error", error);
-    },
-  });
-
-  //0. read getApproved(tokenId) => return Address
-  const { data: approvedAddress } = useContractRead({
-    address: nftAddress,
-    abi: eventContractAbi,
-    functionName: "getApproved",
     args: [parseInt(tokenId)],
     chainId: 5,
     watch: true,
@@ -141,28 +108,6 @@ const TicketDetailPage = () => {
     functionName: "getListing",
     args: [nftAddress, parseInt(tokenId)],
     chainId: 5,
-    watch: true,
-    onError(error) {
-      console.log("Error", error);
-    },
-  });
-
-  // 0. read mint price first
-  const { data: mintFee } = useContractRead({
-    address: nftAddress,
-    abi: eventContractAbi,
-    functionName: "mintFee",
-    watch: true,
-    onError(error) {
-      console.log("Error", error);
-    },
-  });
-
-  // 0. read price Celling
-  const { data: priceCelling } = useContractRead({
-    address: nftAddress,
-    abi: eventContractAbi,
-    functionName: "getPriceCelling",
     watch: true,
     onError(error) {
       console.log("Error", error);
@@ -223,6 +168,9 @@ const TicketDetailPage = () => {
     error: listTxError,
   } = useContractWrite(listTxConfig);
 
+  console.log(`listTxResult`);
+  console.log(listTxResult);
+
   const {
     data: listTxReceipt,
     isSuccess: listTxSuccess,
@@ -231,11 +179,9 @@ const TicketDetailPage = () => {
     hash: listTxResult?.hash,
   });
 
-  const isApproved =
-    approveTxSuccess || approvedAddress === nftMarketplaceAddress;
+  const isApproved = approveTxSuccess;
   const isListed = listTxSuccess;
 
-  //transaction in progress
   let disabled =
     !isOwner ||
     isAlreadyListed ||
@@ -273,24 +219,11 @@ const TicketDetailPage = () => {
     }
   }, [listing]);
 
-  // React.useEffect(() => {
-  //   if (approveTxReceipt) {
-  //  setIsApproved(true)
-  //   }
-  // }, [approveTxReceipt]);
-
   React.useEffect(() => {
-    if (mintFee !== null && priceCelling !== null && priceCelling !== 0) {
-      try {
-        const mintFeeInETH = ethers.utils.formatEther(mintFee);
-        const priceCellingInETH = ethers.utils.formatEther(priceCelling);
-        setMintFeeInETH(mintFeeInETH);
-        setPriceCellingInETH(priceCellingInETH);
-      } catch (error) {
-        console.log(error);
-      }
+    if (approveTxReceipt) {
+      listTx?.();
     }
-  }, [mintFee, priceCelling]);
+  }, [approveTxReceipt]);
 
   return (
     <ClientOnly>
@@ -315,11 +248,8 @@ const TicketDetailPage = () => {
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid item xs={12} md={8} lg={9}>
               <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-                <Typography variant="h6" color="inherit">
-                  Ticket Detail
-                </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  Viewing event detail of token {token} in {event}
+                  Viewing listing detail of token {token} in {event}
                 </Typography>
 
                 {!isOwner && (
@@ -361,37 +291,22 @@ const TicketDetailPage = () => {
                         <Box
                           sx={{ display: "flex", justifyContent: "flex-end" }}
                         >
-                          {approvedAddress === nftMarketplaceAddress ? (
+                          <Typography variant="body2" color="text.secondary">
+                            {isApproveTxLoading && "Waiting for approval..."}
+                            {isApproveTxStarted &&
+                              !isApproved &&
+                              "Approving marketplace to trade on behalf in progress..."}
+                          </Typography>
+                          {isApproved && (
                             <Typography variant="body2" color="text.secondary">
-                              You approved us to trade previously.
-                            </Typography>
-                          ) : (
-                            <Box>
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
+                              You approved NFT Marketplace to trade for your
+                              token in Goerli Network.
+                              <Link
+                                href={`https://goerli.etherscan.io/tx/${approveTxResult.hash}`}
                               >
-                                {isApproveTxLoading &&
-                                  "Waiting for approval..."}
-                                {isApproveTxStarted &&
-                                  !isApproved &&
-                                  "Approving marketplace to trade on behalf in progress..."}
-                              </Typography>
-                              {isApproved && (
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  You approved NFT Marketplace to trade for your
-                                  token in Goerli Network.
-                                  <Link
-                                    href={`https://goerli.etherscan.io/tx/${approveTxResult.hash}`}
-                                  >
-                                    (view Tx)
-                                  </Link>
-                                </Typography>
-                              )}
-                            </Box>
+                                (view Tx)
+                              </Link>
+                            </Typography>
                           )}
                           <Typography variant="body2" color="text.secondary">
                             {isListTxLoading && "Waiting for approval..."}
@@ -428,22 +343,7 @@ const TicketDetailPage = () => {
                             style={{ marginTop: 24 }}
                             variant="contained"
                             sx={{ mt: 3, ml: 1 }}
-                            disabled={
-                              disabled ||
-                              approvedAddress === nftMarketplaceAddress
-                            }
-                            className="button"
-                            onClick={() => {
-                              handleApprove();
-                            }}
-                          >
-                            Authorize Marketplace
-                          </Button>
-                          <Button
-                            style={{ marginTop: 24 }}
-                            variant="contained"
-                            sx={{ mt: 3, ml: 1 }}
-                            disabled={disabled || !isApproved}
+                            disabled={disabled}
                             className="button"
                             onClick={handleClickOpen}
                           >
@@ -455,9 +355,7 @@ const TicketDetailPage = () => {
                             <DialogContent>
                               <DialogContentText>
                                 Please enter the price at which you want to sell
-                                this NFT, price cannot be zero. Please noted the
-                                artist setup the price Celling:{" "}
-                                {priceCellingInETH}
+                                this NFT:
                               </DialogContentText>
                               <TextField
                                 autoFocus
@@ -465,30 +363,15 @@ const TicketDetailPage = () => {
                                 id="price"
                                 label="Price in ETH"
                                 type="number"
-                                defaultValue={
-                                  mintFee
-                                    ? ethers.utils.formatEther(mintFee)
-                                    : 0.1
-                                }
-                                inputProps={{
-                                  max: priceCellingInETH,
-                                  min: 0.00001,
-                                }}
+                                value={price}
                                 onChange={handlePriceChange}
                                 fullWidth
                               />
-                              {errorMessage && (
-                                <DialogContentText sx={{ color: "red" }}>
-                                  {errorMessage}
-                                </DialogContentText>
-                              )}
                             </DialogContent>
                             <DialogActions>
                               <Button onClick={handleClose}>Cancel</Button>
                               <Button
-                                onClick={() => {
-                                  handleList();
-                                }}
+                                onClick={handleSell}
                                 variant="contained"
                                 color="primary"
                               >
@@ -515,4 +398,4 @@ const TicketDetailPage = () => {
   );
 };
 
-export default TicketDetailPage;
+export default ListingDetail;

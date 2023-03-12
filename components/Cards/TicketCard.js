@@ -74,8 +74,6 @@ export default function TicketCard(props) {
       const res = await fetch(requestURL);
       const json = await res.json();
 
-      console.log("JSON Response");
-      console.log(json);
       const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
       const fileUriUpdated = fileUriRaw.replace(
         "ipfs://",
@@ -107,7 +105,6 @@ export default function TicketCard(props) {
   }, [readTxResult]);
 
   React.useEffect(() => {
-    console.log(metaData);
     if (contractUri !== null) {
       getMetaDataFromURI();
     }
