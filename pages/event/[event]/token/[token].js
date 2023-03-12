@@ -17,6 +17,7 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import ClientOnly from "@/src/utils/clientOnly";
 import { UriViewer } from "@/components/Tables/UriViewer";
@@ -96,11 +97,11 @@ const TicketDetailPage = () => {
   };
 
   const handleList = () => {
-    if (price <= 0 || price > priceCellingInETH) {
-      setOpen(true);
-    } else {
+    if (price > 0 && price <= priceCellingInETH) {
       listTx?.();
       handleClose();
+    } else {
+      setOpen(true);
     }
   };
   console.log(`price`);
@@ -322,15 +323,23 @@ const TicketDetailPage = () => {
                   Viewing event detail of token {token} in {event}
                 </Typography>
 
-                {!isOwner && (
+                {isOwner ? (
+                  <Typography variant="body2" color="text.secondary">
+                    You are the owner.
+                  </Typography>
+                ) : (
                   <Typography variant="body2" color="text.secondary">
                     You are not the owner.
                   </Typography>
                 )}
 
-                {isAlreadyListed && (
+                {isAlreadyListed ? (
                   <Typography variant="body2" color="text.secondary">
                     The item is listed already.
+                  </Typography>
+                ) : (
+                  <Typography variant="body2" color="text.secondary">
+                    The item can be listed in Marketplace.
                   </Typography>
                 )}
 
@@ -363,7 +372,7 @@ const TicketDetailPage = () => {
                         >
                           {approvedAddress === nftMarketplaceAddress ? (
                             <Typography variant="body2" color="text.secondary">
-                              You approved us to trade previously.
+                              You approved us to trade already.
                             </Typography>
                           ) : (
                             <Box>
@@ -377,6 +386,10 @@ const TicketDetailPage = () => {
                                   !isApproved &&
                                   "Approving marketplace to trade on behalf in progress..."}
                               </Typography>
+                              {(isApproveTxLoading ||
+                                (isApproveTxStarted && !isApproved)) && (
+                                <CircularProgress />
+                              )}
                               {isApproved && (
                                 <Typography
                                   variant="body2"
@@ -399,6 +412,10 @@ const TicketDetailPage = () => {
                               !isListed &&
                               "Listing in progress..."}
                           </Typography>
+                          {(isListTxLoading ||
+                            (isListTxStarted && !isListed)) && (
+                            <CircularProgress />
+                          )}
                           {isListed && (
                             <Typography variant="body2" color="text.secondary">
                               The ticket has been listed in Marketplace in
@@ -429,7 +446,11 @@ const TicketDetailPage = () => {
                             variant="contained"
                             sx={{ mt: 3, ml: 1 }}
                             disabled={
-                              disabled ||
+                              !isOwner ||
+                              isAlreadyListed ||
+                              !approveTx ||
+                              isApproveTxLoading ||
+                              isApproveTxStarted ||
                               approvedAddress === nftMarketplaceAddress
                             }
                             className="button"
@@ -443,7 +464,13 @@ const TicketDetailPage = () => {
                             style={{ marginTop: 24 }}
                             variant="contained"
                             sx={{ mt: 3, ml: 1 }}
-                            disabled={disabled || !isApproved}
+                            disabled={
+                              !isOwner ||
+                              isAlreadyListed ||
+                              isListTxLoading ||
+                              isListTxStarted ||
+                              !isApproved
+                            }
                             className="button"
                             onClick={handleClickOpen}
                           >
@@ -455,9 +482,9 @@ const TicketDetailPage = () => {
                             <DialogContent>
                               <DialogContentText>
                                 Please enter the price at which you want to sell
-                                this NFT, price cannot be zero. Please noted the
-                                artist setup the price Celling:{" "}
-                                {priceCellingInETH}
+                                this NFT, price cannot be zero. Original Sale
+                                Price is {mintFeeInETH}. Please noted the artist
+                                setup the price Celling: {priceCellingInETH}
                               </DialogContentText>
                               <TextField
                                 autoFocus
@@ -465,11 +492,6 @@ const TicketDetailPage = () => {
                                 id="price"
                                 label="Price in ETH"
                                 type="number"
-                                defaultValue={
-                                  mintFee
-                                    ? ethers.utils.formatEther(mintFee)
-                                    : 0.1
-                                }
                                 inputProps={{
                                   max: priceCellingInETH,
                                   min: 0.00001,

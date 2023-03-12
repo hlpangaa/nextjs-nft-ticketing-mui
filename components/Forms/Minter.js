@@ -6,12 +6,14 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
 import Button from "@mui/material/Button";
-import EventCard from "@/components/Cards/EventCard";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import Image from "next/image";
 import { ethers, BigNumber } from "ethers";
 
 // import from project files
 import FlipCard, { BackCard, FrontCard } from "@/components/Cards/FlipCard";
+import EventCard from "@/components/Cards/EventCard";
 
 // project consts
 import networkMapping from "@/constants/networkMapping.json";
@@ -40,7 +42,7 @@ export function Minter(props) {
   //react hook
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);
-  const [totalMinted, setTotalMinted] = React.useState(0);
+  const [remainingSuppy, setRemainingSuppy] = React.useState(0);
 
   // wagmi hook
   const { isConnected, address: signerAddress } = useAccount();
@@ -51,6 +53,29 @@ export function Minter(props) {
     address: nftAddress,
     abi: eventContractAbi,
     functionName: "mintFee",
+    watch: true,
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+
+  // 0. call read supplyCap function
+
+  const { data: supplyCap } = useContractRead({
+    address: nftAddress,
+    abi: eventContractAbi,
+    functionName: "supplyCap",
+    watch: true,
+    onError(error) {
+      console.log("Error", error);
+    },
+  });
+
+  // 0. call read nextToken function
+  const { data: nextToken } = useContractRead({
+    address: nftAddress,
+    abi: eventContractAbi,
+    functionName: "_getNextTokenId",
     watch: true,
     onError(error) {
       console.log("Error", error);
@@ -90,36 +115,16 @@ export function Minter(props) {
     hash: sendTxResult?.hash,
   });
 
-  // 2. call read function
-
-  const { data: supplyCap } = useContractRead({
-    address: nftAddress,
-    abi: eventContractAbi,
-    functionName: "supplyCap",
-    watch: true,
-    onError(error) {
-      console.log("Error", error);
-    },
-  });
-
-  const { data: nextToken } = useContractRead({
-    address: nftAddress,
-    abi: eventContractAbi,
-    functionName: "_getNextTokenId",
-    watch: true,
-    onError(error) {
-      console.log("Error", error);
-    },
-  });
-
   const isMinted = txSuccess;
+
+  console.log((remainingSuppy / supplyCap) * 100);
 
   let disabled = !sendTx || isTxLoading || isTxStarted;
 
   React.useEffect(() => {
     if (supplyCap && nextToken) {
-      const totalSupply = supplyCap - nextToken + 1;
-      setTotalMinted(totalSupply);
+      const remainingSuppy = supplyCap - nextToken + 1;
+      setRemainingSuppy(remainingSuppy);
     }
   }, [supplyCap, nextToken]);
   return (
@@ -131,9 +136,7 @@ export function Minter(props) {
             <Typography variant="h6" gutterBottom>
               Mint your ticket
             </Typography>
-            <Typography variant="body2" gutterBottom>
-              {totalMinted} tickets remain...
-            </Typography>
+
             {sendTxError && (
               <p style={{ marginTop: 24, color: "#FF6257" }}>
                 Error: {sendTxError.message}
@@ -176,21 +179,9 @@ export function Minter(props) {
                         Your Ticket will show up in your wallet in the next few
                         minutes.
                       </p>
-                      <p style={{ marginBottom: 6 }}>
-                        View on{" "}
-                        <a
-                          href={`https://goerli.etherscan.io/tx/${sendTxResult?.hash}`}
-                        >
-                          Etherscan
-                        </a>
-                      </p>
                       <p>
-                        View on{" "}
-                        <a
-                          href={`https://testnets.opensea.io/assets/goerli/${txReceipt?.to}/1`}
-                        >
-                          Opensea
-                        </a>
+                        Return to{" "}
+                        <a href="/event/displayAll/token">My Ticket Page</a>
                       </p>
                     </div>
                   </BackCard>
@@ -202,6 +193,9 @@ export function Minter(props) {
                     {isTxLoading && "Waiting for approval..."}
                     {isTxStarted && !isMinted && "Minting in progress..."}
                   </Typography>
+                  {(isTxLoading || (isTxStarted && !isMinted)) && (
+                    <CircularProgress />
+                  )}
                   {isMinted && (
                     <Typography variant="body2" color="text.secondary">
                       Ticket has been minted in Goerli Network.
@@ -212,7 +206,48 @@ export function Minter(props) {
                       </Link>
                     </Typography>
                   )}
-
+                </Box>
+                <Box sx={{ display: "flex" }}>
+                  <Grid item>
+                    {" "}
+                    <Box sx={{ position: "relative", display: "inline-flex" }}>
+                      {" "}
+                      <Typography variant="body2" color="text.secondary">
+                        {remainingSuppy} tickets remain...
+                      </Typography>
+                    </Box>
+                  </Grid>
+                  <Grid item>
+                    {" "}
+                    <Box sx={{ position: "relative", display: "inline-flex" }}>
+                      <CircularProgress
+                        variant="determinate"
+                        value={(remainingSuppy / supplyCap) * 100}
+                      />
+                      <Box
+                        sx={{
+                          top: 0,
+                          left: 0,
+                          bottom: 0,
+                          right: 0,
+                          position: "absolute",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Typography
+                          variant="caption"
+                          component="div"
+                          color="text.secondary"
+                        >{`${Math.round(
+                          (remainingSuppy / supplyCap) * 100
+                        )}%`}</Typography>
+                      </Box>
+                    </Box>
+                  </Grid>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                   {mounted && isConnected && !isMinted && (
                     <Button
                       style={{ marginTop: 24 }}

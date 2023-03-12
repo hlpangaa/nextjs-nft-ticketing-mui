@@ -13,6 +13,7 @@ import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Link from "@mui/material/Link";
+import Alert from "@mui/material/Alert";
 
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -23,6 +24,7 @@ import PhotoCamera from "@mui/icons-material/PhotoCamera";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { ethers, BigNumber } from "ethers";
 import { create as ipfsClient } from "ipfs-http-client";
@@ -68,6 +70,7 @@ function HomeContent() {
     setOpen(!open);
   };
   const [file, setFile] = React.useState(null);
+  const [isIpfsLoading, setIsIpfsLoading] = React.useState(false);
   const [formInput, updateFormInput] = React.useState({
     organizerName: "Sam Hui",
     eventName: "IN ONE PLACE",
@@ -116,10 +119,12 @@ function HomeContent() {
   async function uploadImageToIPFS() {
     try {
       if (file) {
+        setIsIpfsLoading(true);
         const added = await client.add(file, {
           progress: (prog) => console.log(`Progresing: ${prog} bytes`),
         });
         const url = `https://gateway.pinata.cloud/ipfs/${added.path}`;
+        setIsIpfsLoading(false);
         console.log("replaced fileUrl");
         updateFormInput({
           ...formInput,
@@ -165,13 +170,11 @@ function HomeContent() {
       fileUrl,
     });
 
-    console.log("data:");
-    console.log(data);
-
     try {
+      setIsIpfsLoading(true);
       const added = await client.add(data);
       const uri = `https://gateway.pinata.cloud/ipfs/${added.path}`;
-
+      setIsIpfsLoading(false);
       setCreateResult({ contractAddress: "", contractURI: uri });
       return uri;
     } catch (error) {
@@ -254,6 +257,13 @@ function HomeContent() {
     >
       <Toolbar />
       <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+        <Alert severity="info">
+          You may go to klook
+          <Link href="https://www.klook.com/event/?spm=Home.CategoryBar_L2_LIST">
+            (link)
+          </Link>{" "}
+          for mockup data
+        </Alert>
         <Grid container spacing={3}>
           {/* CreateEventForm */}
           <Grid item xs={8}>
@@ -454,17 +464,12 @@ function HomeContent() {
                   </IconButton>
                 </Grid>
                 <Grid item xs={12}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        color="secondary"
-                        name="giveSample"
-                        value="yes"
-                      />
-                    }
-                    label="You agree to upload the information to Goerli Network"
-                  />
                   <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    {isIpfsLoading && (
+                      <Typography variant="body2" color="text.secondary">
+                        Preparing the URI in IPFS...
+                      </Typography>
+                    )}
                     {createResult.contractURI && !isContractCreated && (
                       <Typography variant="body2" color="text.secondary">
                         URI has been created in IPFS:
@@ -481,6 +486,11 @@ function HomeContent() {
                         !isContractCreated &&
                         "Creating Contract..."}
                     </Typography>
+                    {(isIpfsLoading ||
+                      isTxLoading ||
+                      (isTxStarted && !isContractCreated)) && (
+                      <CircularProgress />
+                    )}
                     {isContractCreated && (
                       <Typography variant="body2" color="text.secondary">
                         Contract has been created in Goerli Network.
@@ -491,26 +501,32 @@ function HomeContent() {
                         </Link>
                       </Typography>
                     )}
-
-                    {createResult.contractURI ? (
-                      <Button
-                        variant="contained"
-                        onClick={createEventContract}
-                        sx={{ mt: 3, ml: 1 }}
-                        disabled={!sendTx || isTxLoading || isTxStarted}
-                      >
-                        Create
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="contained"
-                        onClick={prepareUri}
-                        sx={{ mt: 3, ml: 1 }}
-                        disabled={!sendTx || isTxLoading || isTxStarted}
-                      >
-                        Upload
-                      </Button>
-                    )}
+                  </Box>
+                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Button
+                      variant="contained"
+                      onClick={prepareUri}
+                      sx={{ mt: 3, ml: 1 }}
+                      disabled={
+                        createResult.contractURI !== "" &&
+                        (!sendTx || isTxLoading || isTxStarted)
+                      }
+                    >
+                      Upload URI
+                    </Button>
+                    <Button
+                      variant="contained"
+                      onClick={createEventContract}
+                      sx={{ mt: 3, ml: 1 }}
+                      disabled={
+                        createResult.contractURI === "" ||
+                        !sendTx ||
+                        isTxLoading ||
+                        isTxStarted
+                      }
+                    >
+                      Create Contract
+                    </Button>
                   </Box>
                 </Grid>
               </Grid>

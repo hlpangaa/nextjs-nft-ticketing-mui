@@ -14,6 +14,7 @@ import Link from "@mui/material/Link";
 import Chart from "@/components/Charts/Chart";
 import Deposits from "@/components/Deposits";
 import Orders from "@/components/Tables/Orders";
+import Transcations from "@/components/Tables/Transcations";
 
 function Copyright(props) {
   return (
