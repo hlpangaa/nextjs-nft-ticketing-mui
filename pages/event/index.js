@@ -42,8 +42,8 @@ function EventList() {
     variables: { creator: signerAddress },
   });
 
-  console.log("inbound events:");
-  console.log(data);
+  // console.log("inbound events:");
+  // console.log(data);
 
   return (
     <ClientOnly>
@@ -107,7 +107,7 @@ function EventList() {
                   data.activeEvents.length === 0) &&
                   !loading && (
                     <Typography variant="body2" color="text.secondary">
-                      You don't have event.
+                      You don not have event.
                     </Typography>
                   )}
                 <Container
@@ -124,12 +124,10 @@ function EventList() {
                       flexWrap: "wrap",
                     }}
                   >
-                    {data?.activeEvents.map((event) => (
+                    {data?.activeEvents?.map((event) => (
                       // <Grid item xs={12} sm={6} md={4} lg={3}>
-                      <Grid item xs={12} sm={8} md={6} lg={4}>
-                        <Link href={`/event/${event.nft}`}>
-                          <EventCard key={event.id} nftAddress={event.nft} />
-                        </Link>
+                      <Grid item key={event.id} xs={12} sm={8} md={6} lg={4}>
+                        <EventCard key={event.id} nftAddress={event.nft} />
                       </Grid>
                     ))}
                   </Grid>

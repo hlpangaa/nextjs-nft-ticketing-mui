@@ -43,8 +43,8 @@ function HomeContent() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error : {error.message}</p>;
 
-  console.log("inbound events:");
-  console.log(data);
+  // console.log("inbound events:");
+  // console.log(data);
 
   return (
     <ClientOnly>
@@ -86,7 +86,6 @@ function HomeContent() {
                   <Typography variant="body2" color="text.secondary">
                     Loading
                   </Typography>
-                  <LinearProgress />
                 </Box>
               )}
 
@@ -111,8 +110,7 @@ function HomeContent() {
                   }}
                 >
                   {data?.activeEvents.map((event) => (
-                    // <Grid item xs={12} sm={6} md={4} lg={3}>
-                    <Grid item xs={12} sm={8} md={6} lg={4}>
+                    <Grid item key={event.id} xs={12} sm={8} md={6} lg={4}>
                       <Link href={`/event/${event.nft}`}>
                         <EventCard key={event.id} nftAddress={event.nft} />
                       </Link>

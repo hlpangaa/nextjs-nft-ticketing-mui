@@ -274,43 +274,6 @@ export default function TicketCard(props) {
     hash: buyTxResult?.hash,
   });
 
-  async function getMetaDataFromURI() {
-    try {
-      const requestURL = contractUri.replace(
-        "ipfs://",
-        "https://gateway.pinata.cloud/ipfs/"
-      );
-
-      const res = await fetch(requestURL);
-      const json = await res.json();
-
-      // console.log("fetched Meta data:");
-      // console.log(json);
-
-      const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
-      const fileUriUpdated = fileUriRaw.replace(
-        "ipfs://",
-        "https://gateway.pinata.cloud/ipfs/"
-      );
-      setMetaData({
-        organizerName: json.organizerName,
-        eventName: json.eventName,
-        eventDescription: json.eventDescription,
-        location: json.location,
-        date: json.date,
-        time: json.time,
-        supplyLimit: json.supplyLimit,
-        price: json.price,
-        royalityInBasepoint: json.royalityInBasepoint,
-        priceCelling: json.priceCelling,
-        fileUrl: fileUriUpdated,
-      });
-    } catch (error) {
-      console.log(`error occur: ${error}`);
-      setIsSupportedToken(false);
-    }
-  }
-
   const isUpdated = updateTxSuccess;
   const isDelisted = delistTxSuccess;
   const isBought = buyTxSuccess;
@@ -340,6 +303,39 @@ export default function TicketCard(props) {
   }, [readTxResult]);
 
   React.useEffect(() => {
+    async function getMetaDataFromURI() {
+      try {
+        const requestURL = contractUri.replace(
+          "ipfs://",
+          "https://gateway.pinata.cloud/ipfs/"
+        );
+
+        const res = await fetch(requestURL);
+        const json = await res.json();
+
+        const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
+        const fileUriUpdated = fileUriRaw.replace(
+          "ipfs://",
+          "https://gateway.pinata.cloud/ipfs/"
+        );
+        setMetaData({
+          organizerName: json.organizerName,
+          eventName: json.eventName,
+          eventDescription: json.eventDescription,
+          location: json.location,
+          date: json.date,
+          time: json.time,
+          supplyLimit: json.supplyLimit,
+          price: json.price,
+          royalityInBasepoint: json.royalityInBasepoint,
+          priceCelling: json.priceCelling,
+          fileUrl: fileUriUpdated,
+        });
+      } catch (error) {
+        console.log(`error occur: ${error}`);
+        setIsSupportedToken(false);
+      }
+    }
     if (contractUri !== null) {
       getMetaDataFromURI();
     }

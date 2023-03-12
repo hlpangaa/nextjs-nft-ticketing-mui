@@ -42,8 +42,8 @@ function TicketList() {
     variables: { owner: signerAddress },
   });
 
-  console.log("inbound ticket:");
-  console.log(data);
+  // console.log("inbound ticket:");
+  // console.log(data);
 
   return (
     <ClientOnly>
@@ -79,8 +79,8 @@ function TicketList() {
                       Signing in as {signerAddress}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      Viewing all tickets owned by signerAddress. Regardless
-                      it's from Minting or purchasing.
+                      Viewing all tickets owned by signerAddress. Regardless it
+                      is from Minting or purchasing.
                     </Typography>
 
                     {loading && (
@@ -102,7 +102,7 @@ function TicketList() {
                       data.itemOwneds.length === 0) &&
                       !loading && (
                         <Typography variant="body2" color="text.secondary">
-                          You don't have ticket.
+                          You don not have ticket.
                         </Typography>
                       )}
                     <Container
@@ -111,16 +111,12 @@ function TicketList() {
                       sx={{ mt: 4, mb: 4 }}
                     >
                       {data?.itemOwneds.map((ticket) => (
-                        <Grid item>
-                          <Link
-                            href={`/event/${ticket.nftAddress}/token/${ticket.tokenId}`}
-                          >
-                            <TicketCard
-                              key={ticket.id}
-                              nftAddress={ticket.nftAddress}
-                              tokenId={ticket.tokenId}
-                            />
-                          </Link>
+                        <Grid item key={ticket.id}>
+                          <TicketCard
+                            key={ticket.id}
+                            nftAddress={ticket.nftAddress}
+                            tokenId={ticket.tokenId}
+                          />
                         </Grid>
                       ))}
                     </Container>

@@ -117,8 +117,6 @@ export function Minter(props) {
 
   const isMinted = txSuccess;
 
-  console.log((remainingSuppy / supplyCap) * 100);
-
   let disabled = !sendTx || isTxLoading || isTxStarted;
 
   React.useEffect(() => {
@@ -181,7 +179,9 @@ export function Minter(props) {
                       </p>
                       <p>
                         Return to{" "}
-                        <a href="/event/displayAll/token">My Ticket Page</a>
+                        <Link href="/event/displayAll/token">
+                          My Ticket Page
+                        </Link>
                       </p>
                     </div>
                   </BackCard>

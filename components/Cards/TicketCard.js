@@ -56,48 +56,6 @@ export default function TicketCard(props) {
     },
   });
 
-  async function getMetaDataFromURI() {
-    // console.log("item:");
-    // console.log(item);
-    // console.log("getMetaDataFromURI is started");
-    // console.log(`readTxResult: ${readTxResult}`);
-    // console.log(`contractUri: ${contractUri}`);
-    // console.log(`metaData:`);
-    // console.log(metaData);
-
-    try {
-      const requestURL = contractUri.replace(
-        "ipfs://",
-        "https://gateway.pinata.cloud/ipfs/"
-      );
-
-      const res = await fetch(requestURL);
-      const json = await res.json();
-
-      const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
-      const fileUriUpdated = fileUriRaw.replace(
-        "ipfs://",
-        "https://gateway.pinata.cloud/ipfs/"
-      );
-      setMetaData({
-        organizerName: json.organizerName,
-        eventName: json.eventName,
-        eventDescription: json.eventDescription,
-        location: json.location,
-        date: json.date,
-        time: json.time,
-        supplyLimit: json.supplyLimit,
-        price: json.price,
-        royalityInBasepoint: json.royalityInBasepoint,
-        priceCelling: json.priceCelling,
-        fileUrl: fileUriUpdated,
-      });
-    } catch (error) {
-      console.log(`error occur: ${error}`);
-      setIsSupportedToken(false);
-    }
-  }
-
   React.useEffect(() => {
     if (readTxResult !== null) {
       setContractUri(readTxResult);
@@ -105,6 +63,39 @@ export default function TicketCard(props) {
   }, [readTxResult]);
 
   React.useEffect(() => {
+    async function getMetaDataFromURI() {
+      try {
+        const requestURL = contractUri.replace(
+          "ipfs://",
+          "https://gateway.pinata.cloud/ipfs/"
+        );
+
+        const res = await fetch(requestURL);
+        const json = await res.json();
+
+        const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
+        const fileUriUpdated = fileUriRaw.replace(
+          "ipfs://",
+          "https://gateway.pinata.cloud/ipfs/"
+        );
+        setMetaData({
+          organizerName: json.organizerName,
+          eventName: json.eventName,
+          eventDescription: json.eventDescription,
+          location: json.location,
+          date: json.date,
+          time: json.time,
+          supplyLimit: json.supplyLimit,
+          price: json.price,
+          royalityInBasepoint: json.royalityInBasepoint,
+          priceCelling: json.priceCelling,
+          fileUrl: fileUriUpdated,
+        });
+      } catch (error) {
+        console.log(`error occur: ${error}`);
+        setIsSupportedToken(false);
+      }
+    }
     if (contractUri !== null) {
       getMetaDataFromURI();
     }
@@ -117,11 +108,13 @@ export default function TicketCard(props) {
 
   return (
     <Grid item xs={12} md={6}>
-      <CardActionArea component="a">
+      <CardActionArea component="div">
         <Card sx={{ display: "flex" }}>
           <CardContent sx={{ flex: 1 }}>
             <Typography gutterBottom variant="h5" component="div">
-              {metaData.organizerName} - {metaData.eventName}
+              <Link href={`/event/${nftAddress}/token/${tokenId}`}>
+                {metaData.organizerName} - {metaData.eventName}{" "}
+              </Link>
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {metaData.date} - {metaData.time}

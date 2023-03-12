@@ -104,10 +104,10 @@ const TicketDetailPage = () => {
       setOpen(true);
     }
   };
-  console.log(`price`);
-  console.log(price);
-  console.log(`priceCellingInETH`);
-  console.log(priceCellingInETH);
+  // console.log(`price`);
+  // console.log(price);
+  // console.log(`priceCellingInETH`);
+  // console.log(priceCellingInETH);
 
   // 0. read ownerOf
   const { data: tokenOwnerAddress, error: readTxError } = useContractRead({
@@ -247,17 +247,17 @@ const TicketDetailPage = () => {
     isListTxLoading ||
     isListTxStarted;
 
-  console.log("checkDisable - owner & listing");
-  console.log(!isOwner);
-  console.log(isAlreadyListed);
-  console.log("checkDisable -approve");
-  console.log(!approveTx);
-  console.log(isApproveTxLoading);
-  console.log(isApproveTxStarted);
-  console.log("checkDisable -list");
-  console.log(!listTx);
-  console.log(isListTxLoading);
-  console.log(isListTxStarted);
+  // console.log("checkDisable - owner & listing");
+  // console.log(!isOwner);
+  // console.log(isAlreadyListed);
+  // console.log("checkDisable -approve");
+  // console.log(!approveTx);
+  // console.log(isApproveTxLoading);
+  // console.log(isApproveTxStarted);
+  // console.log("checkDisable -list");
+  // console.log(!listTx);
+  // console.log(isListTxLoading);
+  // console.log(isListTxStarted);
 
   React.useEffect(() => {
     if (tokenOwnerAddress && signerAddress) {
@@ -364,8 +364,8 @@ const TicketDetailPage = () => {
                           &nbsp;&nbsp;
                         </Typography>
                         <Typography variant="body2" gutterBottom>
-                          it's the combination of the event contract hash, token
-                          id and signerAddress
+                          it is the combination of the event contract hash,
+                          token id and signerAddress
                         </Typography>
                         <Box
                           sx={{ display: "flex", justifyContent: "flex-end" }}

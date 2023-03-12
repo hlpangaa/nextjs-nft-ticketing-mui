@@ -128,9 +128,9 @@ function TicketExchangePage() {
                       flexWrap: "wrap",
                     }}
                   >
-                    {data?.activeItems.map((listing) => (
+                    {data?.activeItems?.map((listing) => (
                       // <Grid item xs={12} sm={6} md={4} lg={3}>
-                      <Grid item xs={12} sm={8} md={6} lg={4}>
+                      <Grid item key={listing.id} xs={12} sm={8} md={6} lg={4}>
                         <ListingCard
                           id={listing.id}
                           nftAddress={listing.nftAddress}

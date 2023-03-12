@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "webpack",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -35,6 +35,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-material-ui-carousel": "^3.4.2",
+    "react-router-dom": "^6.9.0",
     "recharts": "^2.4.3",
     "swr": "^2.0.4",
     "wagmi": "^0.11.7",

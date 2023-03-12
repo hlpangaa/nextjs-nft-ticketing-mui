@@ -53,47 +53,6 @@ export default function EventCard(props) {
     },
   });
 
-  async function getMetaDataFromURI() {
-    // console.log("item:");
-    // console.log(item);
-    // console.log("getMetaDataFromURI is started");
-    // console.log(`readTxResult: ${readTxResult}`);
-    // console.log(`contractUri: ${contractUri}`);
-    // console.log(`metaData:`);
-    // console.log(metaData);
-
-    try {
-      const requestURL = contractUri.replace(
-        "ipfs://",
-        "https://gateway.pinata.cloud/ipfs/"
-      );
-
-      const res = await fetch(requestURL);
-      const json = await res.json();
-
-      const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
-      const fileUriUpdated = fileUriRaw.replace(
-        "ipfs://",
-        "https://gateway.pinata.cloud/ipfs/"
-      );
-      setMetaData({
-        organizerName: json.organizerName,
-        eventName: json.eventName,
-        eventDescription: json.eventDescription,
-        location: json.location,
-        date: json.date,
-        time: json.time,
-        supplyLimit: json.supplyLimit,
-        price: json.price,
-        royalityInBasepoint: json.royalityInBasepoint,
-        priceCelling: json.priceCelling,
-        fileUrl: fileUriUpdated,
-      });
-    } catch (error) {
-      console.log(`error occur: ${error}`);
-    }
-  }
-
   React.useEffect(() => {
     if (readTxResult !== null) {
       setContractUri(readTxResult);
@@ -101,7 +60,38 @@ export default function EventCard(props) {
   }, [readTxResult]);
 
   React.useEffect(() => {
-    console.log(metaData);
+    async function getMetaDataFromURI() {
+      try {
+        const requestURL = contractUri.replace(
+          "ipfs://",
+          "https://gateway.pinata.cloud/ipfs/"
+        );
+
+        const res = await fetch(requestURL);
+        const json = await res.json();
+
+        const fileUriRaw = json.fileUrl ? json.fileUrl : json.image;
+        const fileUriUpdated = fileUriRaw.replace(
+          "ipfs://",
+          "https://gateway.pinata.cloud/ipfs/"
+        );
+        setMetaData({
+          organizerName: json.organizerName,
+          eventName: json.eventName,
+          eventDescription: json.eventDescription,
+          location: json.location,
+          date: json.date,
+          time: json.time,
+          supplyLimit: json.supplyLimit,
+          price: json.price,
+          royalityInBasepoint: json.royalityInBasepoint,
+          priceCelling: json.priceCelling,
+          fileUrl: fileUriUpdated,
+        });
+      } catch (error) {
+        console.log(`error occur: ${error}`);
+      }
+    }
     if (contractUri !== null) {
       getMetaDataFromURI();
     }
@@ -118,7 +108,9 @@ export default function EventCard(props) {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            {metaData.organizerName} - {metaData.eventName}
+            <Link href={`/event/${nftAddress}`}>
+              {metaData.organizerName} - {metaData.eventName}{" "}
+            </Link>
           </Typography>
           <Typography variant="body2" color="text.secondary">
             {metaData.date} - {metaData.time}

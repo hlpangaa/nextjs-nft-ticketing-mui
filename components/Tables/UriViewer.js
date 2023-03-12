@@ -33,21 +33,6 @@ export const UriViewer = (props) => {
     },
   });
 
-  async function getJsonFromUri() {
-    try {
-      const requestURL = tokenUri.replace(
-        "ipfs://",
-        "https://gateway.pinata.cloud/ipfs/"
-      );
-
-      const res = await fetch(requestURL);
-      const json = await res.json();
-      setJson(json);
-    } catch (error) {
-      console.log(`error occur: ${error}`);
-    }
-  }
-
   React.useEffect(() => {
     if (readTxResult !== null) {
       setContractUri(readTxResult);
@@ -55,6 +40,20 @@ export const UriViewer = (props) => {
   }, [readTxResult]);
 
   React.useEffect(() => {
+    async function getJsonFromUri() {
+      try {
+        const requestURL = tokenUri.replace(
+          "ipfs://",
+          "https://gateway.pinata.cloud/ipfs/"
+        );
+
+        const res = await fetch(requestURL);
+        const json = await res.json();
+        setJson(json);
+      } catch (error) {
+        console.log(`error occur: ${error}`);
+      }
+    }
     if (tokenUri !== null) {
       getJsonFromUri();
     }
