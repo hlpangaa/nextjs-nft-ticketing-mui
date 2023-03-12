@@ -19,7 +19,7 @@ import {
   GET_MY_EVENTS,
 } from "@/constants/subgraphQueries";
 import Title from "@/components/Typography/Title";
-import TranscationTable from "@/components/Tables/TranscationTable";
+import TranscationTable from "@/components/Tables/Transcations";
 import { getMintFee } from "@/src/utils/contractUtility";
 import ClientOnly from "@/src/utils/clientOnly";
 import { useState, useEffect } from "react";

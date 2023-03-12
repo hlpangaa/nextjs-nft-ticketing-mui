@@ -17,42 +17,52 @@ function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function TranscationTable(props) {
-  const { rows, title, flexColumnName, ...rest } = props;
+export default function Transcations(props) {
+  const { data, ...rest } = props;
+
+  // console.log(`inbound data`);
+  // console.log(data);
+
   return (
     <React.Fragment>
-      <Title>{title}</Title>
+      <Title>Transcations</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
             <TableCell>Timestamp</TableCell>
             <TableCell>Tx Type</TableCell>
             <TableCell>Tx Hash</TableCell>
-            <TableCell>{flexColumnName}</TableCell>
+            <TableCell>Direction</TableCell>
             <TableCell align="right">Value</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {data?.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{handleTimeStamp(row.timestamp)}</TableCell>
-              <TableCell>{row.transcationType}</TableCell>
+              <TableCell>{row.transactionType}</TableCell>
               <TableCell>
-                {handleAddress(row.txHash)}{" "}
+                {handleAddress(row.txHash ? row.txHash : "")}{" "}
                 <Link href={`https://goerli.etherscan.io/tx/${row?.txHash}`}>
                   (view)
                 </Link>
               </TableCell>
-              <TableCell>
-                {handleAddress(row.flexColumn)}
-                <Link
-                  href={`https://goerli.etherscan.io/address/${row?.flexColumn}`}
-                >
-                  (view)
-                </Link>
-              </TableCell>
+              <TableCell>{row.direction}</TableCell>
 
-              <DisplayMintFee nftAddress={row.nftAddress} />
+              {row.transactionType === "Mint Fee Paid" ||
+              row.transactionType === "Mint Fee Received" ? (
+                <DisplayMintFee
+                  direction={row.direction}
+                  nftAddress={row.nftAddress}
+                />
+              ) : (
+                <TableCell
+                  align="right"
+                  style={{ color: row.value < 0 ? "red" : "green" }}
+                >
+                  {row.value ? handleCurrencyFormat(row.value, "ETH") : 0} ETH
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

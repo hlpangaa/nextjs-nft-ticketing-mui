@@ -89,7 +89,7 @@ export default function Deposits(props) {
     isWithdrawTxStarted ||
     proceeds === "0.0";
 
-  console.log(proceeds);
+  // console.log(proceeds);
   return (
     <React.Fragment>
       <Title>Recent Proceeds</Title>

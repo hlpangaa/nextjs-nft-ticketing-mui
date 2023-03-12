@@ -26,6 +26,7 @@ import DialogTitle from "@mui/material/DialogTitle";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 
 // project consts
 import networkMapping from "@/constants/networkMapping.json";
@@ -122,8 +123,8 @@ export default function TicketCard(props) {
       setErrorMessage("Price cannot be greater than price celling");
     } else {
       setErrorMessage("");
+      setPrice(value);
     }
-    setPrice(value);
   };
 
   const handleBuy = () => {
@@ -132,11 +133,11 @@ export default function TicketCard(props) {
   };
 
   const handleUpdate = () => {
-    if (price <= 0 || price > priceCellingInETH) {
-      setOpen(true);
-    } else {
+    if (price > 0 && price <= priceCellingInETH) {
       updateTx?.();
       handleClose();
+    } else {
+      setOpen(true);
     }
   };
 
@@ -499,9 +500,6 @@ export default function TicketCard(props) {
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <CardContent>
             <Typography variant="body2" color="text.secondary">
-              Minted:{" "}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
               Price Celling:{priceCellingInETH} ETH
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -524,6 +522,9 @@ export default function TicketCard(props) {
                 !isUpdated &&
                 "Update Listing in progress..."}
             </Typography>
+            {(isUpdateTxLoading || (isUpdateTxStarted && !isUpdated)) && (
+              <CircularProgress />
+            )}
             {isUpdated && (
               <Typography variant="body2" color="text.secondary">
                 The listing has been updated in Goerli Network. You may refresh
@@ -540,6 +541,9 @@ export default function TicketCard(props) {
               {isDelistTxLoading && "Waiting for approval..."}
               {isDelistTxStarted && !isDelisted && "delisting in progress..."}
             </Typography>
+            {(isDelistTxLoading || (isDelistTxStarted && !isDelisted)) && (
+              <CircularProgress />
+            )}
             {isDelisted && (
               <Typography variant="body2" color="text.secondary">
                 The ticket has been delisted in Marketplace in Goerli Network.
@@ -556,6 +560,9 @@ export default function TicketCard(props) {
               {isBuyTxLoading && "Waiting for approval..."}
               {isBuyTxStarted && !isBought && "Buying ticket in progress..."}
             </Typography>
+            {(isBuyTxLoading || (isBuyTxStarted && !isBought)) && (
+              <CircularProgress />
+            )}
             {isBought && (
               <Typography variant="body2" color="text.secondary">
                 The ticket has been bought in Marketplace in Goerli Network. You

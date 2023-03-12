@@ -19,22 +19,25 @@ export function handleTimeStamp(timeStamp) {
 }
 
 export function handleCurrencyFormat(value, unit) {
-  if (unit == "ETH") {
-    console.log(value);
-    console.log("convert from wei to ETH");
-
-    return ethers.utils.formatEther(value);
-  } else {
-    console.log(value);
-    console.log("convert to ETH");
-    return ethers.utils.parseEther(value, "ether");
+  try {
+    if (unit == "ETH") {
+      // console.log(value);
+      // console.log("convert from wei to ETH");
+      return ethers.utils.formatEther(value);
+    } else {
+      // console.log(value);
+      // console.log("convert to ETH");
+      return ethers.utils.parseEther(value, "ether");
+    }
+  } catch (error) {
+    console.log(error);
   }
-
-  //formating refer to https://docs.ethers.org/v4/api-utils.html
-  //utils.bigNumberify
-  // mintFee is string
-  // const bigNumber = BigNumber.from(mintFee);
-  // const eth = handleCurrencyFormat(bigNumber, "ETH");
-
-  // return <TableCell align="right">{`${eth} ETH`}</TableCell>;
 }
+
+//formating refer to https://docs.ethers.org/v4/api-utils.html
+//utils.bigNumberify
+// mintFee is string
+// const bigNumber = BigNumber.from(mintFee);
+// const eth = handleCurrencyFormat(bigNumber, "ETH");
+
+// return <TableCell align="right">{`${eth} ETH`}</TableCell>;

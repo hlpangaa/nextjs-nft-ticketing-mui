@@ -34,7 +34,7 @@ function Copyright(props) {
   );
 }
 
-function SellTicket() {
+function TicketExchangePage() {
   const { isConnected, address: signerAddress } = useAccount();
 
   const { loading, error, data } = useQuery(GET_ACTIVE_ITEMS);
@@ -154,5 +154,5 @@ function SellTicket() {
 }
 
 export default function Home() {
-  return <SellTicket />;
+  return <TicketExchangePage />;
 }
