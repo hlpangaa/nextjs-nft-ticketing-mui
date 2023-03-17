@@ -28,7 +28,10 @@ const clientSideEmotionCache = createEmotionCache();
 //rainbowkit const
 const { chains, provider } = configureChains(
   [goerli],
-  [alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()]
+  [
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
+    publicProvider(),
+  ]
 );
 
 //apollo graphQL const
