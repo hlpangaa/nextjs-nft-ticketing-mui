@@ -28,11 +28,9 @@ const clientSideEmotionCache = createEmotionCache();
 //rainbowkit const
 const { chains, provider } = configureChains(
   [goerli],
-  [
-    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID }),
-    publicProvider(),
-  ]
+  [alchemyProvider({ apiKey: process.env.ALCHEMY_ID }), publicProvider()]
 );
+
 //apollo graphQL const
 const apolloClient = new ApolloClient({
   uri: "https://api.studio.thegraph.com/query/40468/nftticketing/1.3.0",
