@@ -98,9 +98,7 @@ function HomeContent() {
       authorization:
         "Basic " +
         Buffer.from(
-          process.env.NEXT_PUBLIC_INFURA_PROJECT_ID +
-            ":" +
-            process.env.NEXT_PUBLIC_INFURA_API_SECRET
+          process.env.INFURA_PROJECT_ID + ":" + process.env.INFURA_API_SECRET
         ).toString("base64"),
     },
   });
