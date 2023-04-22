@@ -372,7 +372,10 @@ export default function TicketCard(props) {
             </Typography>
           ) : (
             <Typography variant="body2" color="text.secondary">
-              offered by <Link href={seller}>{trimedSellerAddress}</Link>
+              offered by{" "}
+              <Link href={"https://goerli.etherscan.io/address/" + seller}>
+                {trimedSellerAddress}
+              </Link>
             </Typography>
           )}
         </CardContent>

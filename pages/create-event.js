@@ -43,6 +43,7 @@ import {
   useNetwork,
   erc20ABI,
 } from "wagmi";
+import ClientOnly from "@/src/utils/clientOnly";
 
 function Copyright(props) {
   return (
@@ -65,6 +66,7 @@ function Copyright(props) {
 const mdTheme = createTheme();
 
 function HomeContent() {
+  const { isConnected, address: signerAddress } = useAccount();
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -243,367 +245,375 @@ function HomeContent() {
   let disabled = !sendTx || isTxLoading || isTxStarted;
 
   return (
-    <Box
-      component="main"
-      sx={{
-        backgroundColor: (theme) =>
-          theme.palette.mode === "light"
-            ? theme.palette.grey[100]
-            : theme.palette.grey[900],
-        flexGrow: 1,
-        height: "100vh",
-        overflow: "auto",
-      }}
-    >
-      <Toolbar />
-      <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-        <Alert severity="info">
-          You may go to klook
-          <Link href="https://www.klook.com/event/?spm=Home.CategoryBar_L2_LIST">
-            (link)
-          </Link>{" "}
-          for mockup data
-        </Alert>
-        <Grid container spacing={3}>
-          {/* CreateEventForm */}
-          <Grid item xs={8}>
-            <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-              <Typography variant="h6" gutterBottom>
-                Create Event Page
-              </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="organizerName"
-                    name="organizerName"
-                    label="Organizer Name"
-                    defaultValue={formInput.organizerName}
-                    fullWidth
-                    autoComplete="given-name"
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        organizerName: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="eventName"
-                    name="eventName"
-                    label="Event Name"
-                    defaultValue={formInput.eventName}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        eventName: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    id="eventDescription"
-                    name="eventDescription"
-                    label="Event Description"
-                    defaultValue={formInput.eventDescription}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        eventDescription: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    id="location"
-                    name="location"
-                    label="Location"
-                    defaultValue={formInput.location}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        location: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="date"
-                    name="date"
-                    label="Date"
-                    defaultValue={formInput.date}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        date: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    id="time"
-                    name="time"
-                    label="Time"
-                    defaultValue={formInput.time}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        time: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="supplyLimit"
-                    name="supplyLimit"
-                    label="Supply Limit"
-                    defaultValue={formInput.supplyLimit}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        supplyLimit: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    required
-                    id="price"
-                    name="price"
-                    label="Price in ETH"
-                    defaultValue={formInput.price}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        price: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    id="royalityInBasepoint"
-                    name="royalityInBasepoint"
-                    label="Royality % in base point"
-                    defaultValue={formInput.royalityInBasepoint}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        royalityInBasepoint: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    id="priceCelling"
-                    name="priceCelling"
-                    label="Price Celling"
-                    defaultValue={formInput.priceCelling}
-                    fullWidth
-                    variant="standard"
-                    onChange={(e) =>
-                      updateFormInput({
-                        ...formInput,
-                        priceCelling: e.target.value,
-                      })
-                    }
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    disabled
-                    id="outlined-disabled"
-                    label="Event Poster"
-                    defaultValue="Please upload image"
-                  />
-                  <IconButton
-                    color="primary"
-                    aria-label="upload picture"
-                    component="label"
-                  >
-                    <input
-                      hidden
-                      accept="image/*"
-                      type="file"
-                      onChange={onChange}
-                    />
-                    <PhotoCamera />
-                  </IconButton>
-                  <IconButton aria-label="delete" size="large">
-                    <DeleteIcon fontSize="inherit" />
-                  </IconButton>
-                </Grid>
-                <Grid item xs={12}>
-                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                    {isIpfsLoading && (
-                      <Typography variant="body2" color="text.secondary">
-                        Preparing the URI in IPFS...
-                      </Typography>
-                    )}
-                    {createResult.contractURI && !isContractCreated && (
-                      <Typography variant="body2" color="text.secondary">
-                        URI has been created in IPFS:
-                        <Link href={createResult.contractURI}>(view)</Link>
-                      </Typography>
-                    )}
-                    <Typography variant="body2" color="text.secondary">
-                      &nbsp;&nbsp;
-                    </Typography>
-
-                    <Typography variant="body2" color="text.secondary">
-                      {isTxLoading && "Waiting for approval..."}
-                      {isTxStarted &&
-                        !isContractCreated &&
-                        "Creating Contract..."}
-                    </Typography>
-                    {(isIpfsLoading ||
-                      isTxLoading ||
-                      (isTxStarted && !isContractCreated)) && (
-                      <CircularProgress />
-                    )}
-                    {isContractCreated && (
-                      <Typography variant="body2" color="text.secondary">
-                        Contract has been created in Goerli Network.
-                        <Link
-                          href={`https://goerli.etherscan.io/tx/${sendTxResult.hash}`}
-                        >
-                          (view Tx)
-                        </Link>
-                      </Typography>
-                    )}
-                  </Box>
-                  <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button
-                      variant="contained"
-                      onClick={prepareUri}
-                      sx={{ mt: 3, ml: 1 }}
-                      disabled={
-                        createResult.contractURI !== "" &&
-                        (!sendTx || isTxLoading || isTxStarted)
-                      }
-                    >
-                      Upload URI
-                    </Button>
-                    <Button
-                      variant="contained"
-                      onClick={createEventContract}
-                      sx={{ mt: 3, ml: 1 }}
-                      disabled={
-                        createResult.contractURI === "" ||
-                        !sendTx ||
-                        isTxLoading ||
-                        isTxStarted
-                      }
-                    >
-                      Create Contract
-                    </Button>
-                  </Box>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-          <Grid item xs={4}>
-            <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-              <Grid item xs={12} md={12}>
-                <Card sx={{ maxWidth: 345 }}>
-                  <CardMedia
-                    component="img"
-                    height="300"
-                    image={formInput.fileUrl}
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {formInput.organizerName} - {formInput.eventName}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {formInput.date} - {formInput.time}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {formInput.location}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      &nbsp;&nbsp;
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Description: {formInput.eventDescription}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {`Price ${formInput.price} ETH`}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Supply: {formInput.supplyLimit}
-                    </Typography>
-                    {createResult.contractURI ? (
-                      <Typography variant="body2" color="text.secondary">
-                        contractURI:{" "}
-                        <Link href={createResult.contractURI}>(view)</Link>
-                      </Typography>
-                    ) : (
-                      ""
-                    )}
-                  </CardContent>
-                </Card>
-                {isContractCreated ? (
-                  <></>
-                ) : (
-                  <Typography variant="h8" gutterBottom>
-                    Contract will be deployed in Goerli Network.
+    <ClientOnly>
+      <Box
+        component="main"
+        sx={{
+          backgroundColor: (theme) =>
+            theme.palette.mode === "light"
+              ? theme.palette.grey[100]
+              : theme.palette.grey[900],
+          flexGrow: 1,
+          height: "100vh",
+          overflow: "auto",
+        }}
+      >
+        <Toolbar />
+        {!isConnected ? (
+          <Typography variant="body2" color="text.secondary">
+            Please connect to your wallet...
+          </Typography>
+        ) : (
+          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+            <Alert severity="info">
+              You may go to klook
+              <Link href="https://www.klook.com/event/?spm=Home.CategoryBar_L2_LIST">
+                (link)
+              </Link>{" "}
+              for mockup data
+            </Alert>
+            <Grid container spacing={3}>
+              {/* CreateEventForm */}
+              <Grid item xs={8}>
+                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                  <Typography variant="h6" gutterBottom>
+                    Create Event Page
                   </Typography>
-                )}
+                  <Grid container spacing={3}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        id="organizerName"
+                        name="organizerName"
+                        label="Organizer Name"
+                        defaultValue={formInput.organizerName}
+                        fullWidth
+                        autoComplete="given-name"
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            organizerName: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        id="eventName"
+                        name="eventName"
+                        label="Event Name"
+                        defaultValue={formInput.eventName}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            eventName: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        required
+                        id="eventDescription"
+                        name="eventDescription"
+                        label="Event Description"
+                        defaultValue={formInput.eventDescription}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            eventDescription: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        id="location"
+                        name="location"
+                        label="Location"
+                        defaultValue={formInput.location}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            location: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        id="date"
+                        name="date"
+                        label="Date"
+                        defaultValue={formInput.date}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            date: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        id="time"
+                        name="time"
+                        label="Time"
+                        defaultValue={formInput.time}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            time: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        id="supplyLimit"
+                        name="supplyLimit"
+                        label="Supply Limit"
+                        defaultValue={formInput.supplyLimit}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            supplyLimit: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        required
+                        id="price"
+                        name="price"
+                        label="Price in ETH"
+                        defaultValue={formInput.price}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            price: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        id="royalityInBasepoint"
+                        name="royalityInBasepoint"
+                        label="Royality % in base point"
+                        defaultValue={formInput.royalityInBasepoint}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            royalityInBasepoint: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        id="priceCelling"
+                        name="priceCelling"
+                        label="Price Celling"
+                        defaultValue={formInput.priceCelling}
+                        fullWidth
+                        variant="standard"
+                        onChange={(e) =>
+                          updateFormInput({
+                            ...formInput,
+                            priceCelling: e.target.value,
+                          })
+                        }
+                      />
+                    </Grid>
+                    <Grid item xs={12}>
+                      <TextField
+                        disabled
+                        id="outlined-disabled"
+                        label="Event Poster"
+                        defaultValue="Please upload image"
+                      />
+                      <IconButton
+                        color="primary"
+                        aria-label="upload picture"
+                        component="label"
+                      >
+                        <input
+                          hidden
+                          accept="image/*"
+                          type="file"
+                          onChange={onChange}
+                        />
+                        <PhotoCamera />
+                      </IconButton>
+                      <IconButton aria-label="delete" size="large">
+                        <DeleteIcon fontSize="inherit" />
+                      </IconButton>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                        {isIpfsLoading && (
+                          <Typography variant="body2" color="text.secondary">
+                            Preparing the URI in IPFS...
+                          </Typography>
+                        )}
+                        {createResult.contractURI && !isContractCreated && (
+                          <Typography variant="body2" color="text.secondary">
+                            URI has been created in IPFS:
+                            <Link href={createResult.contractURI}>(view)</Link>
+                          </Typography>
+                        )}
+                        <Typography variant="body2" color="text.secondary">
+                          &nbsp;&nbsp;
+                        </Typography>
 
-                <Typography variant="body2" color="text.secondary">
-                  &nbsp;&nbsp;
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  1. You will receive {formInput.royalityInBasepoint * 0.0001}{" "}
-                  ETH in every 1 ETH of the resell transcation in the secondary
-                  market.
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  &nbsp;&nbsp;
-                </Typography>
-                <Typography variant="body2" gutterBottom>
-                  2. Secondary market sale with price that over{" "}
-                  {(Number(formInput.priceCelling) * formInput.price) / 100}
-                  ETH will be prohibited
-                </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {isTxLoading && "Waiting for approval..."}
+                          {isTxStarted &&
+                            !isContractCreated &&
+                            "Creating Contract..."}
+                        </Typography>
+                        {(isIpfsLoading ||
+                          isTxLoading ||
+                          (isTxStarted && !isContractCreated)) && (
+                          <CircularProgress />
+                        )}
+                        {isContractCreated && (
+                          <Typography variant="body2" color="text.secondary">
+                            Contract has been created in Goerli Network.
+                            <Link
+                              href={`https://goerli.etherscan.io/tx/${sendTxResult.hash}`}
+                            >
+                              (view Tx)
+                            </Link>
+                          </Typography>
+                        )}
+                      </Box>
+                      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                        <Button
+                          variant="contained"
+                          onClick={prepareUri}
+                          sx={{ mt: 3, ml: 1 }}
+                          disabled={
+                            createResult.contractURI !== "" &&
+                            (!sendTx || isTxLoading || isTxStarted)
+                          }
+                        >
+                          Upload URI
+                        </Button>
+                        <Button
+                          variant="contained"
+                          onClick={createEventContract}
+                          sx={{ mt: 3, ml: 1 }}
+                          disabled={
+                            createResult.contractURI === "" ||
+                            !sendTx ||
+                            isTxLoading ||
+                            isTxStarted
+                          }
+                        >
+                          Create Contract
+                        </Button>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Paper>
               </Grid>
-            </Paper>
-          </Grid>
-        </Grid>
-        <Copyright sx={{ pt: 4 }} />
-      </Container>
-    </Box>
+              <Grid item xs={4}>
+                <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
+                  <Grid item xs={12} md={12}>
+                    <Card sx={{ maxWidth: 345 }}>
+                      <CardMedia
+                        component="img"
+                        height="300"
+                        image={formInput.fileUrl}
+                      />
+                      <CardContent>
+                        <Typography gutterBottom variant="h5" component="div">
+                          {formInput.organizerName} - {formInput.eventName}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {formInput.date} - {formInput.time}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {formInput.location}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          &nbsp;&nbsp;
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Description: {formInput.eventDescription}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {`Price ${formInput.price} ETH`}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Supply: {formInput.supplyLimit}
+                        </Typography>
+                        {createResult.contractURI ? (
+                          <Typography variant="body2" color="text.secondary">
+                            contractURI:{" "}
+                            <Link href={createResult.contractURI}>(view)</Link>
+                          </Typography>
+                        ) : (
+                          ""
+                        )}
+                      </CardContent>
+                    </Card>
+                    {isContractCreated ? (
+                      <></>
+                    ) : (
+                      <Typography variant="h8" gutterBottom>
+                        Contract will be deployed in Goerli Network.
+                      </Typography>
+                    )}
+
+                    <Typography variant="body2" color="text.secondary">
+                      &nbsp;&nbsp;
+                    </Typography>
+                    <Typography variant="body2" gutterBottom>
+                      1. You will receive{" "}
+                      {formInput.royalityInBasepoint * 0.0001} ETH in every 1
+                      ETH of the resell transcation in the secondary market.
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      &nbsp;&nbsp;
+                    </Typography>
+                    <Typography variant="body2" gutterBottom>
+                      2. Secondary market sale with price that over{" "}
+                      {(Number(formInput.priceCelling) * formInput.price) / 100}
+                      ETH will be prohibited
+                    </Typography>
+                  </Grid>
+                </Paper>
+              </Grid>
+            </Grid>
+            <Copyright sx={{ pt: 4 }} />
+          </Container>
+        )}
+      </Box>
+    </ClientOnly>
   );
 }
 
